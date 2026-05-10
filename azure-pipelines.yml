@@ -4,35 +4,53 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  terraformVersion: '1.9.0'
-
 steps:
 
+# FETCH SECRETS FROM KEY VAULT
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'azure-terraform-connection'
+    KeyVaultName: 'hubspoke-kv'
+    SecretsFilter: '*'
+    RunAsPreJob: true
+
+# INSTALL TERRAFORM
 - task: TerraformInstaller@1
   inputs:
-    terraformVersion: $(terraformVersion)
+    terraformVersion: '1.9.0'
 
+# TERRAFORM INIT
 - task: TerraformTaskV4@4
   displayName: Terraform Init
   inputs:
     provider: 'azurerm'
     command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
     backendServiceArm: 'azure-terraform-connection'
     backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
     backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-    backendAzureRmContainerName: 'newtfstate'
+    backendAzureRmContainerName: 'tfstate'
     backendAzureRmKey: 'dev.terraform.tfstate'
 
+# TERRAFORM VALIDATE
 - task: TerraformTaskV4@4
   displayName: Terraform Validate
   inputs:
     provider: 'azurerm'
     command: 'validate'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
 
+# TERRAFORM PLAN
 - task: TerraformTaskV4@4
   displayName: Terraform Plan
   inputs:
     provider: 'azurerm'
     command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
     environmentServiceNameAzureRM: 'azure-terraform-connection'
+
+    commandOptions: >
+      -var="admin_username=$(admin-username)"
+      -var="admin_password=$(admin-password)"
+      -var="admin_public_ip=$(admin-public-ip)"
+      -var="public_key=$(public-key)"
