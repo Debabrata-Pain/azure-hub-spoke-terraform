@@ -182,7 +182,7 @@ module "app1_vm" {
   subnet_id           = module.spoke1_app_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password
+  admin_password = var.admin_password != null ? var.admin_password : null
   public_key     = var.public_key
 }
 
@@ -195,7 +195,7 @@ module "db1_vm" {
   subnet_id           = module.spoke1_db_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password
+  admin_password = var.admin_password != null ? var.admin_password : null
   public_key     = var.public_key
 }
 
@@ -208,7 +208,7 @@ module "app2_vm" {
   subnet_id           = module.spoke2_app_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password
+  admin_password = var.admin_password != null ? var.admin_password : null
   public_key     = var.public_key
 }
 
@@ -221,7 +221,7 @@ module "db2_vm" {
   subnet_id           = module.spoke2_db_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password
+  admin_password = var.admin_password != null ? var.admin_password : null
   public_key     = var.public_key
 }
 
