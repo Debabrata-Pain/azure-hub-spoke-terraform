@@ -1,4 +1,7 @@
-variable "admin_public_ip" {}
+variable "admin_public_ip" {
+  type    = string
+  default = null
+}
 
 variable "admin_username" {}
 variable "admin_password" {

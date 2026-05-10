@@ -234,7 +234,7 @@ module "firewall" {
   subnet_id            = module.firewall_subnet.subnet_id
   management_subnet_id = module.firewall_mgmt_subnet.subnet_id
 
-  admin_public_ip = var.admin_public_ip
+  admin_public_ip = var.admin_public_ip != null ? var.admin_public_ip : null
 
   app1_private_ip = module.app1_vm.private_ip
   db1_private_ip  = module.db1_vm.private_ip
