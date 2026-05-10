@@ -21,7 +21,7 @@ disable_password_authentication = true
 
 admin_ssh_key {
   username   = var.admin_username
-  public_key = var.public_key
+  public_key = var.public_key != null ? var.public_key : file("~/.ssh/id_rsa.pub")
   }
 
   network_interface_ids = [
