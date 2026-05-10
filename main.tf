@@ -182,7 +182,7 @@ module "app1_vm" {
   subnet_id           = module.spoke1_app_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password != null ? var.admin_password : null
+  admin_password = var.admin_password 
   public_key     = var.public_key
 }
 
@@ -195,7 +195,7 @@ module "db1_vm" {
   subnet_id           = module.spoke1_db_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password != null ? var.admin_password : null
+  admin_password = var.admin_password 
   public_key     = var.public_key
 }
 
@@ -208,7 +208,7 @@ module "app2_vm" {
   subnet_id           = module.spoke2_app_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password != null ? var.admin_password : null
+  admin_password = var.admin_password
   public_key     = var.public_key
 }
 
@@ -221,7 +221,7 @@ module "db2_vm" {
   subnet_id           = module.spoke2_db_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password != null ? var.admin_password : null
+  admin_password = var.admin_password
   public_key     = var.public_key
 }
 
@@ -234,7 +234,7 @@ module "firewall" {
   subnet_id            = module.firewall_subnet.subnet_id
   management_subnet_id = module.firewall_mgmt_subnet.subnet_id
 
-  admin_public_ip = var.admin_public_ip != null ? var.admin_public_ip : null
+  admin_public_ip = var.admin_public_ip
 
   app1_private_ip = module.app1_vm.private_ip
   db1_private_ip  = module.db1_vm.private_ip

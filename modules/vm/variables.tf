@@ -10,4 +10,6 @@ variable "vm_size" {
 variable "admin_username" {}
 variable "admin_password" {}
 
-variable "public_key" {}
+variable "public_key" {
+  type = string
+}
