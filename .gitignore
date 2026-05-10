@@ -1,0 +1,25 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Sensitive files
+*.tfvars
+*.tfvars.json
+
+# Terraform plan files
+*.tfplan
+
+# SSH Keys
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
