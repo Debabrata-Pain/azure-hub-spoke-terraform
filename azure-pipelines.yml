@@ -27,9 +27,9 @@ steps:
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
     backendServiceArm: 'azure-terraform-connection'
-    backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
+    backendAzureRmResourceGroupName: 'TF-2.0-ResourceGroup'
     backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-    backendAzureRmContainerName: 'tfstate'
+    backendAzureRmContainerName: 'newtfstate'
     backendAzureRmKey: 'dev.terraform.tfstate'
 
 # TERRAFORM VALIDATE
