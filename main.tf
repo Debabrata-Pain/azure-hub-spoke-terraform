@@ -1,6 +1,6 @@
 
 module "rg" {
-  source   = "./modules/RG"
+  source   = "./modules/rg"
   name     = "hub-spoke-rg"
   location = "Central India"
 }
