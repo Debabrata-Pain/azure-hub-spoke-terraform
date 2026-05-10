@@ -14,5 +14,6 @@ variable "admin_password" {
 
 variable "public_key" {
   type = string
+  default = null
 }
 
