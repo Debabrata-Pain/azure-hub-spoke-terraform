@@ -21,7 +21,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.8.5'
+        terraformVersion: '1.9.0'
 
     - script: |
         export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
@@ -63,7 +63,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.8.5'
+        terraformVersion: '1.9.0'
 
     - script: |
         export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
@@ -117,7 +117,7 @@ stages:
           - task: TerraformInstaller@0
             displayName: 'Install Terraform'
             inputs:
-              terraformVersion: '1.8.5'
+              terraformVersion: '1.9.0'
 
           - script: |
               export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
