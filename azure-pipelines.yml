@@ -11,11 +11,9 @@ stages:
 # =========================
 - stage: Validate
   displayName: Terraform Validate
-
   jobs:
   - job: ValidateTerraform
     steps:
-
     - task: AzureKeyVault@2
       inputs:
         azureSubscription: 'azure-terraform-connection'
@@ -27,6 +25,12 @@ stages:
       displayName: 'Install Terraform'
       inputs:
         terraformVersion: '1.8.5'
+
+    - script: |
+        export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        terraform version
+      displayName: 'Fix Terraform PATH & Verify'
+      continueOnError: false
 
     - task: TerraformTaskV4@4
       displayName: Terraform Init
@@ -53,11 +57,9 @@ stages:
 - stage: Plan
   displayName: Terraform Plan
   dependsOn: Validate
-
   jobs:
   - job: TerraformPlan
     steps:
-
     - task: AzureKeyVault@2
       inputs:
         azureSubscription: 'azure-terraform-connection'
@@ -69,6 +71,12 @@ stages:
       displayName: 'Install Terraform'
       inputs:
         terraformVersion: '1.8.5'
+
+    - script: |
+        export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        terraform version
+      displayName: 'Fix Terraform PATH & Verify'
+      continueOnError: false
 
     - task: TerraformTaskV4@4
       displayName: Terraform Init
@@ -89,31 +97,25 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
         environmentServiceNameAzureRM: 'azure-terraform-connection'
-
-        commandOptions: >
+        commandOptions: |
           -var="admin_username=$(admin-username)"
           -var="admin_password=$(admin-password)"
           -var="admin_public_ip=$(admin-public-ip)"
           -var="public_key=$(public-key)"
 
 # =========================
-# STAGE 3 - APPLY
+# STAGE 3 - APPLY (FIXED INDENTATION)
 # =========================
 - stage: Apply
   displayName: Terraform Apply
   dependsOn: Plan
-
   jobs:
-  - deployment: TerraformApply
-
-    environment: prod
-
+  - deployment: TerraformApply    # ← Correct: deployment at jobs level
+    environment: prod             # ← Correct: environment at deployment level
     strategy:
       runOnce:
         deploy:
-
           steps:
-
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: 'azure-terraform-connection'
@@ -125,6 +127,12 @@ stages:
             displayName: 'Install Terraform'
             inputs:
               terraformVersion: '1.8.5'
+
+          - script: |
+              export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+              terraform version
+            displayName: 'Fix Terraform PATH & Verify'
+            continueOnError: false
 
           - task: TerraformTaskV4@4
             displayName: Terraform Init
@@ -145,8 +153,7 @@ stages:
               command: 'apply'
               workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
               environmentServiceNameAzureRM: 'azure-terraform-connection'
-
-              commandOptions: >
+              commandOptions: |
                 -auto-approve
                 -var="admin_username=$(admin-username)"
                 -var="admin_password=$(admin-password)"
