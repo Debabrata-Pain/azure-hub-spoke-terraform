@@ -24,8 +24,9 @@ stages:
         RunAsPreJob: true
 
     - task: TerraformInstaller@0
+      displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.9.0'
+        terraformVersion: '1.8.5'
 
     - task: TerraformTaskV4@4
       displayName: Terraform Init
@@ -65,8 +66,9 @@ stages:
         RunAsPreJob: true
 
     - task: TerraformInstaller@0
+      displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.9.0'
+        terraformVersion: '1.8.5'
 
     - task: TerraformTaskV4@4
       displayName: Terraform Init
@@ -120,8 +122,9 @@ stages:
               RunAsPreJob: true
 
           - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
             inputs:
-              terraformVersion: '1.9.0'
+              terraformVersion: '1.8.5'
 
           - task: TerraformTaskV4@4
             displayName: Terraform Init
