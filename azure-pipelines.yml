@@ -97,25 +97,22 @@ stages:
           -var="public_key=$(public-key)"
 
 # =========================
+# =========================
 # STAGE 3 - APPLY
 # =========================
 - stage: Apply
-  displayName: Terraform Apply
   dependsOn: Plan
 
   jobs:
   - deployment: TerraformApply
-
-    pool:
-      vmImage: ubuntu-latest
-
     environment: prod
 
     strategy:
       runOnce:
         deploy:
-
           steps:
+
+          - checkout: self
 
           - task: AzureKeyVault@2
             inputs:
@@ -143,14 +140,14 @@ stages:
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
             inputs:
-                  provider: 'azurerm'
-                  command: 'apply'
-                  workingDirectory: '$(Pipeline.Workspace)/s'
-                  environmentServiceNameAzureRM: 'azure-terraform-connection'
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(Pipeline.Workspace)/s'
+              environmentServiceNameAzureRM: 'azure-terraform-connection'
 
-                  commandOptions: >
-                      -auto-approve
-                      -var="admin_username=$(admin-username)"
-                      -var="admin_password=$(admin-password)"
-                      -var="admin_public_ip=$(admin-public-ip)"
-                      -var="public_key=$(public-key)"
+              commandOptions: >
+                -auto-approve
+                -var="admin_username=$(admin-username)"
+                -var="admin_password=$(admin-password)"
+                -var="admin_public_ip=$(admin-public-ip)"
+                -var="public_key=$(public-key)"
