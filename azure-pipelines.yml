@@ -22,7 +22,7 @@ stages:
         SecretsFilter: '*'
         RunAsPreJob: true
 
-    - task: TerraformInstaller@1
+    - task: TerraformInstaller@0
       inputs:
         terraformVersion: '1.9.0'
 
@@ -62,7 +62,7 @@ stages:
         SecretsFilter: '*'
         RunAsPreJob: true
 
-    - task: TerraformInstaller@1
+    - task: TerraformInstaller@0
       inputs:
         terraformVersion: '1.9.0'
 
@@ -118,7 +118,7 @@ stages:
               SecretsFilter: '*'
               RunAsPreJob: true
 
-          - task: TerraformInstaller@1
+          - task: TerraformInstaller@0
             inputs:
               terraformVersion: '1.9.0'
 
