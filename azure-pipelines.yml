@@ -6,9 +6,6 @@ pool:
 
 stages:
 
-# =========================
-# STAGE 1 - VALIDATE
-# =========================
 - stage: Validate
   displayName: Terraform Validate
   jobs:
@@ -28,32 +25,28 @@ stages:
 
     - script: |
         export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
         terraform version
-      displayName: 'Fix Terraform PATH & Verify'
+        terraform init \
+          -backend-config="storage_account_name=debstorageaccountbackend" \
+          -backend-config="container_name=newtfstate" \
+          -backend-config="key=dev.terraform.tfstate" \
+          -backend-config="resource_group_name=Tr-2.0-ResourceGroup" \
+          -backend-config="subscription_id=$(AZURE_SUBSCRIPTION_ID)" \
+          -backend-config="tenant_id=$(AZURE_TENANT_ID)"
+      displayName: 'Terraform Init'
+      env:
+        AZURE_SUBSCRIPTION_ID: $(azure-terraform-connection-subscription-id)
+        AZURE_TENANT_ID: $(azure-terraform-connection-tenant-id)
       continueOnError: false
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-        backendServiceArm: 'azure-terraform-connection'
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-        backendAzureRmContainerName: 'newtfstate'
-        backendAzureRmKey: 'dev.terraform.tfstate'
+    - script: |
+        export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
+        terraform validate
+      displayName: 'Terraform Validate'
+      continueOnError: false
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform Validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-
-# =========================
-# STAGE 2 - PLAN
-# =========================
 - stage: Plan
   displayName: Terraform Plan
   dependsOn: Validate
@@ -74,44 +67,42 @@ stages:
 
     - script: |
         export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
         terraform version
-      displayName: 'Fix Terraform PATH & Verify'
+        terraform init \
+          -backend-config="storage_account_name=debstorageaccountbackend" \
+          -backend-config="container_name=newtfstate" \
+          -backend-config="key=dev.terraform.tfstate" \
+          -backend-config="resource_group_name=Tr-2.0-ResourceGroup" \
+          -backend-config="subscription_id=$(AZURE_SUBSCRIPTION_ID)" \
+          -backend-config="tenant_id=$(AZURE_TENANT_ID)"
+      displayName: 'Terraform Init'
+      env:
+        AZURE_SUBSCRIPTION_ID: $(azure-terraform-connection-subscription-id)
+        AZURE_TENANT_ID: $(azure-terraform-connection-tenant-id)
       continueOnError: false
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-        backendServiceArm: 'azure-terraform-connection'
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-        backendAzureRmContainerName: 'newtfstate'
-        backendAzureRmKey: 'dev.terraform.tfstate'
+    - script: |
+        export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+        cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
+        terraform plan \
+          -var="admin_username=$(admin-username)" \
+          -var="admin_password=$(admin-password)" \
+          -var="admin_public_ip=$(admin-public-ip)" \
+          -var="public_key=$(public-key)" \
+          -out=tfplan
+      displayName: 'Terraform Plan'
+      env:
+        ARM_SUBSCRIPTION_ID: $(azure-terraform-connection-subscription-id)
+        ARM_TENANT_ID: $(azure-terraform-connection-tenant-id)
+      continueOnError: false
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform Plan
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-        environmentServiceNameAzureRM: 'azure-terraform-connection'
-        commandOptions: |
-          -var="admin_username=$(admin-username)"
-          -var="admin_password=$(admin-password)"
-          -var="admin_public_ip=$(admin-public-ip)"
-          -var="public_key=$(public-key)"
-
-# =========================
-# STAGE 3 - APPLY (FIXED INDENTATION)
-# =========================
 - stage: Apply
   displayName: Terraform Apply
   dependsOn: Plan
   jobs:
-  - deployment: TerraformApply    # ← Correct: deployment at jobs level
-    environment: prod             # ← Correct: environment at deployment level
+  - deployment: TerraformApply
+    environment: prod
     strategy:
       runOnce:
         deploy:
@@ -130,32 +121,32 @@ stages:
 
           - script: |
               export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+              cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
               terraform version
-            displayName: 'Fix Terraform PATH & Verify'
+              terraform init \
+                -backend-config="storage_account_name=debstorageaccountbackend" \
+                -backend-config="container_name=newtfstate" \
+                -backend-config="key=dev.terraform.tfstate" \
+                -backend-config="resource_group_name=Tr-2.0-ResourceGroup" \
+                -backend-config="subscription_id=$(AZURE_SUBSCRIPTION_ID)" \
+                -backend-config="tenant_id=$(AZURE_TENANT_ID)"
+            displayName: 'Terraform Init'
+            env:
+              AZURE_SUBSCRIPTION_ID: $(azure-terraform-connection-subscription-id)
+              AZURE_TENANT_ID: $(azure-terraform-connection-tenant-id)
             continueOnError: false
 
-          - task: TerraformTaskV4@4
-            displayName: Terraform Init
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-              backendServiceArm: 'azure-terraform-connection'
-              backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-              backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-              backendAzureRmContainerName: 'newtfstate'
-              backendAzureRmKey: 'dev.terraform.tfstate'
-
-          - task: TerraformTaskV4@4
-            displayName: Terraform Apply
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
-              environmentServiceNameAzureRM: 'azure-terraform-connection'
-              commandOptions: |
-                -auto-approve
-                -var="admin_username=$(admin-username)"
-                -var="admin_password=$(admin-password)"
-                -var="admin_public_ip=$(admin-public-ip)"
+          - script: |
+              export PATH="$PATH:/opt/hostedtoolcache/terraform/1.8.5/x64"
+              cd $(System.DefaultWorkingDirectory)/hub-spoke-TF
+              terraform apply \
+                -auto-approve \
+                -var="admin_username=$(admin-username)" \
+                -var="admin_password=$(admin-password)" \
+                -var="admin_public_ip=$(admin-public-ip)" \
                 -var="public_key=$(public-key)"
+            displayName: 'Terraform Apply'
+            env:
+              ARM_SUBSCRIPTION_ID: $(azure-terraform-connection-subscription-id)
+              ARM_TENANT_ID: $(azure-terraform-connection-tenant-id)
+            continueOnError: false
