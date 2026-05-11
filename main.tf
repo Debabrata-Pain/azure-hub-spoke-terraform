@@ -186,6 +186,19 @@ module "app1_vm" {
   public_key     = var.public_key
 }
 
+module "app1_vm_shutdown" {
+  source = "./modules/vm-autoshutdown"
+
+  vm_id   = module.app1_vm.vm_id
+  location = module.rg.location
+
+  shutdown_time = "1900"
+
+  tags = {
+    Environment = "Dev"
+  }
+}
+
 module "db1_vm" {
   source = "./modules/vm"
 
@@ -197,6 +210,19 @@ module "db1_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password 
   public_key     = var.public_key
+}
+
+module "db1_vm_shutdown" {
+  source = "./modules/vm-autoshutdown"
+
+  vm_id   = module.db1_vm.vm_id
+  location = module.rg.location
+
+  shutdown_time = "1900"
+
+  tags = {
+    Environment = "Dev"
+  }
 }
 
 module "app2_vm" {
@@ -212,6 +238,19 @@ module "app2_vm" {
   public_key     = var.public_key
 }
 
+module "app2_vm_shutdown" {
+  source = "./modules/vm-autoshutdown"
+
+  vm_id   = module.app2_vm.vm_id
+  location = module.rg.location
+
+  shutdown_time = "1900"
+
+  tags = {
+    Environment = "Dev"
+  }
+}
+
 module "db2_vm" {
   source = "./modules/vm"
 
@@ -223,6 +262,20 @@ module "db2_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password
   public_key     = var.public_key
+}
+
+
+module "db2_vm_shutdown" {
+  source = "./modules/vm-autoshutdown"
+
+  vm_id   = module.db2_vm.vm_id
+  location = module.rg.location
+
+  shutdown_time = "1900"
+
+  tags = {
+    Environment = "Dev"
+  }
 }
 
 module "firewall" {
