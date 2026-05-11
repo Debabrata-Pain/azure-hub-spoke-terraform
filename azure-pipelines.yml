@@ -133,7 +133,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              workingDirectory: '$(Pipeline.Workspace)/s'
               backendServiceArm: 'azure-terraform-connection'
               backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
               backendAzureRmStorageAccountName: 'debstorageaccountbackend'
@@ -143,14 +143,14 @@ stages:
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
             inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-              environmentServiceNameAzureRM: 'azure-terraform-connection'
+                  provider: 'azurerm'
+                  command: 'apply'
+                  workingDirectory: '$(Pipeline.Workspace)/s'
+                  environmentServiceNameAzureRM: 'azure-terraform-connection'
 
-              commandOptions: >
-                -auto-approve
-                -var="admin_username=$(admin-username)"
-                -var="admin_password=$(admin-password)"
-                -var="admin_public_ip=$(admin-public-ip)"
-                -var="public_key=$(public-key)"
+                  commandOptions: >
+                      -auto-approve
+                      -var="admin_username=$(admin-username)"
+                      -var="admin_password=$(admin-password)"
+                      -var="admin_public_ip=$(admin-public-ip)"
+                      -var="public_key=$(public-key)"
