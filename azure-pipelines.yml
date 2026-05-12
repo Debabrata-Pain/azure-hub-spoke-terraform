@@ -51,13 +51,22 @@ steps:
 
 # VALIDATE
 - bash: |
-    cd hub-spoke-TF
-    terraform validate
-  displayName: Terraform Validate
+    - bash: |
+    terraform init \
+      -backend-config="storage_account_name=debstorageaccountbackend" \
+      -backend-config="container_name=newtfstate" \
+      -backend-config="key=${{ parameters.environment }}.tfstate" \
+      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
+  displayName: Terraform Init
 
 # PLAN
 - bash: |
-    cd hub-spoke-TF
+    terraform init \
+      -backend-config="storage_account_name=debstorageaccountbackend" \
+      -backend-config="container_name=newtfstate" \
+      -backend-config="key=${{ parameters.environment }}.tfstate" \
+      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
+  displayName: Terraform Init
 
     terraform plan \
       -var-file="${{ parameters.environment }}.tfvars" \
@@ -69,7 +78,12 @@ steps:
 
 # APPLY
 - bash: |
-    cd hub-spoke-TF
+    terraform init \
+      -backend-config="storage_account_name=debstorageaccountbackend" \
+      -backend-config="container_name=newtfstate" \
+      -backend-config="key=${{ parameters.environment }}.tfstate" \
+      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
+  displayName: Terraform Init
 
     terraform apply -auto-approve \
       -var-file="${{ parameters.environment }}.tfvars" \
