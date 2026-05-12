@@ -80,7 +80,7 @@ stages:
               provider: 'azurerm'
               command: 'plan'
 
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
 
               environmentServiceNameAzureRM: 'azure-terraform-connection'
 
@@ -98,7 +98,7 @@ stages:
               provider: 'azurerm'
               command: 'apply'
 
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/hub-spoke-TF'
 
               environmentServiceNameAzureRM: 'azure-terraform-connection'
 
