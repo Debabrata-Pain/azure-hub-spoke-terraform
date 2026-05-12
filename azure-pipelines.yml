@@ -33,6 +33,15 @@ steps:
     terraform version
   displayName: Install Terraform
 
+- task: AzureCLI@2
+  displayName: Azure Login
+  inputs:
+    azureSubscription: 'azure-terraform-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      az account show
+
 # TERRAFORM INIT
 - bash: |
     terraform init \
