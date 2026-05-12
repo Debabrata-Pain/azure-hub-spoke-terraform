@@ -15,7 +15,7 @@ parameters:
   - prod
 
 variables:
-  terraformVersion: '1.9.8'
+  terraformVersion: '1.9.0'
 
 stages:
 
@@ -44,9 +44,9 @@ stages:
               RunAsPreJob: true
 
           # INSTALL TERRAFORM
-          - task: TerraformInstaller@1
+          - task: TerraformInstaller@0
             inputs:
-              terraformVersion: '1.9.8'
+              terraformVersion: '1.9.0'
 
           # TERRAFORM INIT
           - task: TerraformTaskV4@4
