@@ -74,6 +74,11 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)'
 
           # TERRAFORM PLAN
+          
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '1.9.8'
+
           - task: TerraformTaskV4@4
             displayName: Terraform Plan
             inputs:
@@ -92,6 +97,11 @@ stages:
                 -var="public_key=$(public-key)"
 
           # TERRAFORM APPLY
+
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '1.9.8'
+
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
             inputs:
