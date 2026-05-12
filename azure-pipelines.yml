@@ -153,11 +153,12 @@ stages:
 
                 terraform plan \
                   -var-file="${{ parameters.environment }}.tfvars" \
+                  -var="client_id=$(client-id)" \
+                  -var="client_secret=$(client-secret)" \
                   -var="admin_username=$(admin-username)" \
                   -var="admin_password=$(admin-password)" \
                   -var="admin_public_ip=$(admin-public-ip)" \
-                  -var="public_key=$(public-key)"
-
+                  -var="public_key=$(public-key)"     
           # ==========================================
           # TERRAFORM APPLY
           # ==========================================
@@ -182,7 +183,9 @@ stages:
 
                 terraform apply -auto-approve \
                   -var-file="${{ parameters.environment }}.tfvars" \
+                  -var="client_id=$(client-id)" \
+                  -var="client_secret=$(client-secret)" \
                   -var="admin_username=$(admin-username)" \
                   -var="admin_password=$(admin-password)" \
                   -var="admin_public_ip=$(admin-public-ip)" \
-                  -var="public_key=$(public-key)"
+                  -var="public_key=$(public-key)" 

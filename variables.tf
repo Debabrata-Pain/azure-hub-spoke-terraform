@@ -17,3 +17,11 @@ variable "public_key" {
 variable "env" {
   type = string
 }
+
+variable "client_id" {
+  sensitive = true
+}
+
+variable "client_secret" {
+  sensitive = true
+}
