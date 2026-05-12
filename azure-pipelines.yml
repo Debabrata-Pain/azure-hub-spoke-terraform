@@ -39,6 +39,7 @@ steps:
     azureSubscription: 'azure-terraform-connection'
     scriptType: bash
     scriptLocation: inlineScript
+    addSpnToEnvironment: true
     inlineScript: |
 
       terraform init \
@@ -63,6 +64,7 @@ steps:
     azureSubscription: 'azure-terraform-connection'
     scriptType: bash
     scriptLocation: inlineScript
+    addSpnToEnvironment: true
     inlineScript: |
       terraform validate
 
@@ -73,6 +75,7 @@ steps:
     azureSubscription: 'azure-terraform-connection'
     scriptType: bash
     scriptLocation: inlineScript
+    addSpnToEnvironment: true
     inlineScript: |
 
       terraform plan \
@@ -89,6 +92,7 @@ steps:
     azureSubscription: 'azure-terraform-connection'
     scriptType: bash
     scriptLocation: inlineScript
+    addSpnToEnvironment: true
     inlineScript: |
 
       terraform apply -auto-approve \
