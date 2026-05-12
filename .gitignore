@@ -23,3 +23,7 @@ id_rsa.pub
 # OS files
 .DS_Store
 Thumbs.db
+
+.terraform/
+*.tfstate
+*.tfstate.backup

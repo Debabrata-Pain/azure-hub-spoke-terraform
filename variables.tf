@@ -14,3 +14,6 @@ variable "public_key" {
   type = string
 }
 
+variable "env" {
+  type = string
+}

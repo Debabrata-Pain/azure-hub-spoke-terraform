@@ -4,131 +4,30 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+- name: environment
+  displayName: Select Environment
+  type: string
+  default: dev
+
+  values:
+  - dev
+  - uat
+  - prod
+
+variables:
+  terraformVersion: '1.9.8'
+
 stages:
 
-# =========================
-# VALIDATE STAGE
-# =========================
-- stage: Validate
-  displayName: Terraform Validate
+- stage: TerraformDeploy
+
+  displayName: Deploy to ${{ parameters.environment }}
 
   jobs:
-  - job: ValidateTerraform
+  - deployment: TerraformDeployment
 
-    steps:
-
-    - task: AzureKeyVault@2
-      inputs:
-        azureSubscription: 'azure-terraform-connection'
-        KeyVaultName: 'hubspoke-kv'
-        SecretsFilter: '*'
-        RunAsPreJob: true
-
-    - task: TerraformInstaller@0
-      inputs:
-        terraformVersion: '1.9.8'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-        backendServiceArm: 'azure-terraform-connection'
-
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
-        backendAzureRmContainerName: 'newtfstate'
-
-        backendAzureRmKey: 'dev.terraform.tfstate'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Validate
-
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-# =========================
-# PLAN STAGE
-# =========================
-- stage: Plan
-  displayName: Terraform Plan
-
-  dependsOn: Validate
-
-  jobs:
-  - job: TerraformPlan
-
-    steps:
-
-    - task: AzureKeyVault@2
-      inputs:
-        azureSubscription: 'azure-terraform-connection'
-        KeyVaultName: 'hubspoke-kv'
-        SecretsFilter: '*'
-        RunAsPreJob: true
-
-    - task: TerraformInstaller@0
-      inputs:
-        terraformVersion: '1.9.8'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-        backendServiceArm: 'azure-terraform-connection'
-
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
-        backendAzureRmContainerName: 'newtfstate'
-
-        backendAzureRmKey: 'dev.terraform.tfstate'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Plan
-
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-        environmentServiceNameAzureRM: 'azure-terraform-connection'
-
-        commandOptions: >
-          -var="admin_username=$(admin-username)"
-          -var="admin_password=$(admin-password)"
-          -var="admin_public_ip=$(admin-public-ip)"
-          -var="public_key=$(public-key)"
-
-
-# =========================
-# APPLY STAGE
-# =========================
-- stage: Apply
-  displayName: Terraform Apply
-
-  dependsOn: Plan
-
-  jobs:
-  - deployment: TerraformApply
-
-    environment: prod
+    environment: ${{ parameters.environment }}
 
     strategy:
       runOnce:
@@ -136,8 +35,7 @@ stages:
 
           steps:
 
-          - checkout: self
-
+          # FETCH SECRETS
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: 'azure-terraform-connection'
@@ -145,13 +43,14 @@ stages:
               SecretsFilter: '*'
               RunAsPreJob: true
 
-          - task: TerraformInstaller@0
+          # INSTALL TERRAFORM
+          - task: TerraformInstaller@1
             inputs:
-              terraformVersion: '1.9.8'
+              terraformVersion: $(terraformVersion)
 
+          # TERRAFORM INIT
           - task: TerraformTaskV4@4
             displayName: Terraform Init
-
             inputs:
               provider: 'azurerm'
               command: 'init'
@@ -159,18 +58,42 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)'
 
               backendServiceArm: 'azure-terraform-connection'
-
               backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
               backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
               backendAzureRmContainerName: 'newtfstate'
 
-              backendAzureRmKey: 'dev.terraform.tfstate'
+              backendAzureRmKey: '${{ parameters.environment }}.tfstate'
 
+          # TERRAFORM VALIDATE
+          - task: TerraformTaskV4@4
+            displayName: Terraform Validate
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          # TERRAFORM PLAN
+          - task: TerraformTaskV4@4
+            displayName: Terraform Plan
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+              environmentServiceNameAzureRM: 'azure-terraform-connection'
+
+              commandOptions: >
+                -var-file="${{ parameters.environment }}.tfvars"
+                -var="admin_username=$(admin-username)"
+                -var="admin_password=$(admin-password)"
+                -var="admin_public_ip=$(admin-public-ip)"
+                -var="public_key=$(public-key)"
+
+          # TERRAFORM APPLY
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
-
             inputs:
               provider: 'azurerm'
               command: 'apply'
@@ -181,6 +104,7 @@ stages:
 
               commandOptions: >
                 -auto-approve
+                -var-file="${{ parameters.environment }}.tfvars"
                 -var="admin_username=$(admin-username)"
                 -var="admin_password=$(admin-password)"
                 -var="admin_public_ip=$(admin-public-ip)"

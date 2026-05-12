@@ -1,13 +1,13 @@
 
 module "rg" {
   source   = "./modules/rg"
-  name     = "hub-spoke-rg"
+  name     = "${var.env}-hub-spoke-rg"
   location = "Central India"
 }
 
 module "hub_vnet" {
   source              = "./modules/vnet"
-  name                = "hub-vnet"
+  name                = "${var.env}-hub-vnet"
   location            = module.rg.location
   resource_group_name = module.rg.name
   address_space       = ["10.0.0.0/16"]
@@ -15,7 +15,7 @@ module "hub_vnet" {
 
 module "spoke1_vnet" {
   source              = "./modules/vnet"
-  name                = "spoke1-vnet"
+  name                = "${var.env}-spoke1-vnet"
   location            = module.rg.location
   resource_group_name = module.rg.name
   address_space       = ["10.1.0.0/16"]
@@ -23,7 +23,7 @@ module "spoke1_vnet" {
 
 module "spoke2_vnet" {
   source              = "./modules/vnet"
-  name                = "spoke2-vnet"
+  name                = "${var.env}-spoke2-vnet"
   location            = module.rg.location
   resource_group_name = module.rg.name
   address_space       = ["10.2.0.0/16"]
@@ -31,21 +31,21 @@ module "spoke2_vnet" {
 
 module "spoke1_nsg" {
   source              = "./modules/nsg"
-  name                = "spoke1-nsg"
+  name                = "${var.env}-spoke1-nsg"
   location            = module.rg.location
   resource_group_name = module.rg.name
 }
 
-module "spoke2_nsg" {
+module "spoke2_nsg" { 
   source              = "./modules/nsg"
-  name                = "spoke2-nsg"
+  name                = "${var.env}-spoke2-nsg"
   location            = module.rg.location
   resource_group_name = module.rg.name
 }
 
 module "spoke1_app_subnet" {
   source              = "./modules/subnet"
-  name                = "app-subnet1"
+  name                = "${var.env}-app-subnet1"
   resource_group_name = module.rg.name
   vnet_name           = module.spoke1_vnet.name
   address_prefixes    = ["10.1.1.0/24"]
@@ -53,7 +53,7 @@ module "spoke1_app_subnet" {
 
 module "spoke1_db_subnet" {
   source              = "./modules/subnet"
-  name                = "db-subnet1"
+  name                = "${var.env}-db-subnet1"
   resource_group_name = module.rg.name
   vnet_name           = module.spoke1_vnet.name
   address_prefixes    = ["10.1.2.0/24"]
@@ -61,7 +61,7 @@ module "spoke1_db_subnet" {
 
 module "spoke2_app_subnet" {
   source              = "./modules/subnet"
-  name                = "app-subnet2"
+  name                = "${var.env}-app-subnet2"
   resource_group_name = module.rg.name
   vnet_name           = module.spoke2_vnet.name
   address_prefixes    = ["10.2.1.0/24"]
@@ -69,7 +69,7 @@ module "spoke2_app_subnet" {
 
 module "spoke2_db_subnet" {
   source              = "./modules/subnet"
-  name                = "db-subnet2"
+  name                = "${var.env}-db-subnet2"
   resource_group_name = module.rg.name
   vnet_name           = module.spoke2_vnet.name
   address_prefixes    = ["10.2.2.0/24"]
@@ -77,7 +77,7 @@ module "spoke2_db_subnet" {
 
 module "firewall_subnet" {
   source              = "./modules/subnet"
-  name                = "AzureFirewallSubnet"
+  name                = "${var.env}-AzureFirewallSubnet"
   resource_group_name = module.rg.name
   vnet_name           = module.hub_vnet.name
   address_prefixes    = ["10.0.1.0/26"]
@@ -137,7 +137,7 @@ resource "azurerm_subnet_network_security_group_association" "spoke2_db_assoc" {
 
 module "spoke1_rt" {
   source              = "./modules/route-table"
-  name                = "spoke1-rt"
+  name                = "${var.env}-spoke1-rt"
   location            = module.rg.location
   resource_group_name = module.rg.name
 
@@ -146,7 +146,7 @@ module "spoke1_rt" {
 
 module "spoke2_rt" {
   source              = "./modules/route-table"
-  name                = "spoke2-rt"
+  name                = "${var.env}-spoke2-rt"
   location            = module.rg.location
   resource_group_name = module.rg.name
 
@@ -176,7 +176,7 @@ resource "azurerm_subnet_route_table_association" "spoke2_db_rt" {
 module "app1_vm" {
   source = "./modules/vm"
 
-  vm_name             = "app1-vm"
+  vm_name             = "${var.env}-app1-vm"
   location            = module.rg.location
   resource_group_name = module.rg.name
   subnet_id           = module.spoke1_app_subnet.subnet_id
@@ -202,7 +202,7 @@ module "app1_vm_shutdown" {
 module "db1_vm" {
   source = "./modules/vm"
 
-  vm_name             = "db1-vm"
+  vm_name             = "${var.env}-db1-vm"
   location            = module.rg.location
   resource_group_name = module.rg.name
   subnet_id           = module.spoke1_db_subnet.subnet_id
@@ -228,7 +228,7 @@ module "db1_vm_shutdown" {
 module "app2_vm" {
   source = "./modules/vm"
 
-  vm_name             = "app2-vm"
+  vm_name             = "${var.env}-app2-vm"
   location            = module.rg.location
   resource_group_name = module.rg.name
   subnet_id           = module.spoke2_app_subnet.subnet_id
@@ -254,7 +254,7 @@ module "app2_vm_shutdown" {
 module "db2_vm" {
   source = "./modules/vm"
 
-  vm_name             = "db2-vm"
+  vm_name             = "${var.env}-db2-vm"
   location            = module.rg.location
   resource_group_name = module.rg.name
   subnet_id           = module.spoke2_db_subnet.subnet_id
@@ -280,7 +280,7 @@ module "db2_vm_shutdown" {
 
 module "firewall" {
   source              = "./modules/firewall"
-  name                = "hub-firewall"
+  name                = "${var.env}-hub-firewall"
   location            = module.rg.location
   resource_group_name = module.rg.name
 
@@ -300,7 +300,7 @@ module "firewall" {
 
 module "firewall_mgmt_subnet" {
   source = "./modules/subnet"
-  name   = "AzureFirewallManagementSubnet"
+  name   = "${var.env}-AzureFirewallManagementSubnet"
 
   resource_group_name = module.rg.name
   vnet_name           = module.hub_vnet.name
@@ -310,14 +310,14 @@ module "firewall_mgmt_subnet" {
 
 module "log_analytics" {
   source              = "./modules/log-analytics"
-  name                = "hub-log-workspace"
+  name                = "${var.env}-hub-log-workspace"
   location            = module.rg.location
   resource_group_name = module.rg.name
 }
 
 module "monitor" {
   source              = "./modules/monitor"
-  dcr_name            = "hub-monitor-dcr"
+  dcr_name            = "${var.env}-hub-monitor-dcr"
   location            = module.rg.location
   resource_group_name = module.rg.name
 
@@ -334,7 +334,7 @@ module "monitor" {
 module "appgw_subnet" {
   source = "./modules/subnet"
 
-  name                = "appgw-subnet"
+  name                = "${var.env}-appgw-subnet"
   resource_group_name = module.rg.name
   vnet_name           = module.hub_vnet.name
 
@@ -344,7 +344,7 @@ module "appgw_subnet" {
 module "app_gateway" {
   source = "./modules/app-gateway"
 
-  name                = "hub-appgateway"
+  name                = "${var.env}-hub-appgateway"
   location            = module.rg.location
   resource_group_name = module.rg.name
 
