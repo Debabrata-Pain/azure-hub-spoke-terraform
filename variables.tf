@@ -14,14 +14,4 @@ variable "public_key" {
   type = string
 }
 
-variable "env" {
-  type = string
-}
 
-variable "client_id" {
-  sensitive = true
-}
-
-variable "client_secret" {
-  sensitive = true
-}
