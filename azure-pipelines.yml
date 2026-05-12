@@ -17,6 +17,7 @@ steps:
 
 - checkout: self
 
+# FETCH SECRETS
 - task: AzureKeyVault@2
   inputs:
     azureSubscription: 'azure-terraform-connection'
@@ -24,7 +25,7 @@ steps:
     SecretsFilter: '*'
     RunAsPreJob: true
 
-# INSTALL TERRAFORM MANUALLY
+# INSTALL TERRAFORM
 - bash: |
     wget https://releases.hashicorp.com/terraform/1.9.0/terraform_1.9.0_linux_amd64.zip
     unzip terraform_1.9.0_linux_amd64.zip
@@ -34,40 +35,20 @@ steps:
 
 # TERRAFORM INIT
 - bash: |
-    cd hub-spoke-TF
-
     terraform init \
       -backend-config="storage_account_name=debstorageaccountbackend" \
       -backend-config="container_name=newtfstate" \
       -backend-config="key=${{ parameters.environment }}.tfstate" \
       -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
-  env:
-    ARM_USE_OIDC: true
-    ARM_CLIENT_ID: $(servicePrincipalId)
-    ARM_TENANT_ID: $(tenantId)
-    ARM_SUBSCRIPTION_ID: $(subscriptionId)
-    ARM_OIDC_TOKEN: $(idToken)
   displayName: Terraform Init
 
-# VALIDATE
+# TERRAFORM VALIDATE
 - bash: |
-    - bash: |
-    terraform init \
-      -backend-config="storage_account_name=debstorageaccountbackend" \
-      -backend-config="container_name=newtfstate" \
-      -backend-config="key=${{ parameters.environment }}.tfstate" \
-      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
-  displayName: Terraform Init
+    terraform validate
+  displayName: Terraform Validate
 
-# PLAN
+# TERRAFORM PLAN
 - bash: |
-    terraform init \
-      -backend-config="storage_account_name=debstorageaccountbackend" \
-      -backend-config="container_name=newtfstate" \
-      -backend-config="key=${{ parameters.environment }}.tfstate" \
-      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
-  displayName: Terraform Init
-
     terraform plan \
       -var-file="${{ parameters.environment }}.tfvars" \
       -var="admin_username=$(admin-username)" \
@@ -76,15 +57,8 @@ steps:
       -var="public_key=$(public-key)"
   displayName: Terraform Plan
 
-# APPLY
+# TERRAFORM APPLY
 - bash: |
-    terraform init \
-      -backend-config="storage_account_name=debstorageaccountbackend" \
-      -backend-config="container_name=newtfstate" \
-      -backend-config="key=${{ parameters.environment }}.tfstate" \
-      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
-  displayName: Terraform Init
-
     terraform apply -auto-approve \
       -var-file="${{ parameters.environment }}.tfvars" \
       -var="admin_username=$(admin-username)" \
