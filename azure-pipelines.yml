@@ -34,13 +34,18 @@ steps:
   displayName: Install Terraform
 
 - task: AzureCLI@2
-  displayName: Azure Login
+  displayName: Terraform Init
   inputs:
     azureSubscription: 'azure-terraform-connection'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
-      az account show
+
+      terraform init \
+        -backend-config="storage_account_name=debstorageaccountbackend" \
+        -backend-config="container_name=newtfstate" \
+        -backend-config="key=${{ parameters.environment }}.tfstate" \
+        -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
 
 # TERRAFORM INIT
 - bash: |
@@ -52,26 +57,43 @@ steps:
   displayName: Terraform Init
 
 # TERRAFORM VALIDATE
-- bash: |
-    terraform validate
+- task: AzureCLI@2
   displayName: Terraform Validate
+  inputs:
+    azureSubscription: 'azure-terraform-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform validate
 
 # TERRAFORM PLAN
-- bash: |
-    terraform plan \
-      -var-file="${{ parameters.environment }}.tfvars" \
-      -var="admin_username=$(admin-username)" \
-      -var="admin_password=$(admin-password)" \
-      -var="admin_public_ip=$(admin-public-ip)" \
-      -var="public_key=$(public-key)"
+- task: AzureCLI@2
   displayName: Terraform Plan
+  inputs:
+    azureSubscription: 'azure-terraform-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      terraform plan \
+        -var-file="${{ parameters.environment }}.tfvars" \
+        -var="admin_username=$(admin-username)" \
+        -var="admin_password=$(admin-password)" \
+        -var="admin_public_ip=$(admin-public-ip)" \
+        -var="public_key=$(public-key)"
 
 # TERRAFORM APPLY
-- bash: |
-    terraform apply -auto-approve \
-      -var-file="${{ parameters.environment }}.tfvars" \
-      -var="admin_username=$(admin-username)" \
-      -var="admin_password=$(admin-password)" \
-      -var="admin_public_ip=$(admin-public-ip)" \
-      -var="public_key=$(public-key)"
+- task: AzureCLI@2
   displayName: Terraform Apply
+  inputs:
+    azureSubscription: 'azure-terraform-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      terraform apply -auto-approve \
+        -var-file="${{ parameters.environment }}.tfvars" \
+        -var="admin_username=$(admin-username)" \
+        -var="admin_password=$(admin-password)" \
+        -var="admin_public_ip=$(admin-public-ip)" \
+        -var="public_key=$(public-key)"
