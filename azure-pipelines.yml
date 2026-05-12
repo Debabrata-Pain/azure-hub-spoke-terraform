@@ -6,98 +6,183 @@ pool:
 
 parameters:
 - name: environment
+  displayName: Select Environment
   type: string
   default: dev
+
   values:
   - dev
   - uat
   - prod
 
-steps:
+variables:
+  terraformVersion: '1.9.0'
 
-- checkout: self
+stages:
 
-# FETCH SECRETS
-- task: AzureKeyVault@2
-  inputs:
-    azureSubscription: 'azure-terraform-connection'
-    KeyVaultName: 'hubspoke-kv'
-    SecretsFilter: '*'
-    RunAsPreJob: true
+# ==================================================
+# TERRAFORM DEPLOYMENT STAGE
+# ==================================================
 
-# INSTALL TERRAFORM
-- bash: |
-    wget https://releases.hashicorp.com/terraform/1.9.0/terraform_1.9.0_linux_amd64.zip
-    unzip terraform_1.9.0_linux_amd64.zip
-    sudo mv terraform /usr/local/bin/
-    terraform version
-  displayName: Install Terraform
+- stage: TerraformDeploy
 
-- task: AzureCLI@2
-  displayName: Terraform Init
-  inputs:
-    azureSubscription: 'azure-terraform-connection'
-    scriptType: bash
-    scriptLocation: inlineScript
-    addSpnToEnvironment: true
-    inlineScript: |
+  displayName: Deploy to ${{ parameters.environment }}
 
-      terraform init \
-        -backend-config="storage_account_name=debstorageaccountbackend" \
-        -backend-config="container_name=newtfstate" \
-        -backend-config="key=${{ parameters.environment }}.tfstate" \
-        -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
+  jobs:
 
-# TERRAFORM INIT
-- bash: |
-    terraform init \
-      -backend-config="storage_account_name=debstorageaccountbackend" \
-      -backend-config="container_name=newtfstate" \
-      -backend-config="key=${{ parameters.environment }}.tfstate" \
-      -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
-  displayName: Terraform Init
+  - deployment: TerraformDeployment
 
-# TERRAFORM VALIDATE
-- task: AzureCLI@2
-  displayName: Terraform Validate
-  inputs:
-    azureSubscription: 'azure-terraform-connection'
-    scriptType: bash
-    scriptLocation: inlineScript
-    addSpnToEnvironment: true
-    inlineScript: |
-      terraform validate
+    displayName: Terraform Deployment
 
-# TERRAFORM PLAN
-- task: AzureCLI@2
-  displayName: Terraform Plan
-  inputs:
-    azureSubscription: 'azure-terraform-connection'
-    scriptType: bash
-    scriptLocation: inlineScript
-    addSpnToEnvironment: true
-    inlineScript: |
+    environment: ${{ parameters.environment }}
 
-      terraform plan \
-        -var-file="${{ parameters.environment }}.tfvars" \
-        -var="admin_username=$(admin-username)" \
-        -var="admin_password=$(admin-password)" \
-        -var="admin_public_ip=$(admin-public-ip)" \
-        -var="public_key=$(public-key)"
+    strategy:
+      runOnce:
 
-# TERRAFORM APPLY
-- task: AzureCLI@2
-  displayName: Terraform Apply
-  inputs:
-    azureSubscription: 'azure-terraform-connection'
-    scriptType: bash
-    scriptLocation: inlineScript
-    addSpnToEnvironment: true
-    inlineScript: |
+        deploy:
 
-      terraform apply -auto-approve \
-        -var-file="${{ parameters.environment }}.tfvars" \
-        -var="admin_username=$(admin-username)" \
-        -var="admin_password=$(admin-password)" \
-        -var="admin_public_ip=$(admin-public-ip)" \
-        -var="public_key=$(public-key)"
+          steps:
+
+          # ==========================================
+          # CHECKOUT CODE
+          # ==========================================
+
+          - checkout: self
+
+          # ==========================================
+          # FETCH KEY VAULT SECRETS
+          # ==========================================
+
+          - task: AzureKeyVault@2
+            displayName: Fetch Secrets from Key Vault
+
+            inputs:
+              azureSubscription: 'azure-terraform-connection'
+              KeyVaultName: 'hubspoke-kv'
+              SecretsFilter: '*'
+              RunAsPreJob: true
+
+          # ==========================================
+          # INSTALL TERRAFORM
+          # ==========================================
+
+          - bash: |
+              wget https://releases.hashicorp.com/terraform/1.9.0/terraform_1.9.0_linux_amd64.zip
+
+              unzip terraform_1.9.0_linux_amd64.zip
+
+              sudo mv terraform /usr/local/bin/
+
+              terraform version
+
+            displayName: Install Terraform
+
+          # ==========================================
+          # TERRAFORM INIT
+          # ==========================================
+
+          - task: AzureCLI@2
+            displayName: Terraform Init
+
+            inputs:
+              azureSubscription: 'azure-terraform-connection'
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+
+              inlineScript: |
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_SUBSCRIPTION_ID="f2671501-63ad-4140-b3b4-443e5c06ff86"
+                export ARM_TENANT_ID="b24e2927-f763-4eda-b681-1f150c208e21"
+
+                cd $(System.DefaultWorkingDirectory)
+
+                terraform init -reconfigure \
+                  -backend-config="storage_account_name=debstorageaccountbackend" \
+                  -backend-config="container_name=newtfstate" \
+                  -backend-config="key=${{ parameters.environment }}.tfstate" \
+                  -backend-config="resource_group_name=Tr-2.0-ResourceGroup"
+
+          # ==========================================
+          # TERRAFORM VALIDATE
+          # ==========================================
+
+          - task: AzureCLI@2
+            displayName: Terraform Validate
+
+            inputs:
+              azureSubscription: 'azure-terraform-connection'
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+
+              inlineScript: |
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_SUBSCRIPTION_ID="f2671501-63ad-4140-b3b4-443e5c06ff86"
+                export ARM_TENANT_ID="b24e2927-f763-4eda-b681-1f150c208e21"
+
+                cd $(System.DefaultWorkingDirectory)
+
+                terraform validate
+
+          # ==========================================
+          # TERRAFORM PLAN
+          # ==========================================
+
+          - task: AzureCLI@2
+            displayName: Terraform Plan
+
+            inputs:
+              azureSubscription: 'azure-terraform-connection'
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+
+              inlineScript: |
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_SUBSCRIPTION_ID="f2671501-63ad-4140-b3b4-443e5c06ff86"
+                export ARM_TENANT_ID="b24e2927-f763-4eda-b681-1f150c208e21"
+
+                cd $(System.DefaultWorkingDirectory)
+
+                terraform plan \
+                  -var-file="${{ parameters.environment }}.tfvars" \
+                  -var="admin_username=$(admin-username)" \
+                  -var="admin_password=$(admin-password)" \
+                  -var="admin_public_ip=$(admin-public-ip)" \
+                  -var="public_key=$(public-key)"
+
+          # ==========================================
+          # TERRAFORM APPLY
+          # ==========================================
+
+          - task: AzureCLI@2
+            displayName: Terraform Apply
+
+            inputs:
+              azureSubscription: 'azure-terraform-connection'
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+
+              inlineScript: |
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_SUBSCRIPTION_ID="f2671501-63ad-4140-b3b4-443e5c06ff86"
+                export ARM_TENANT_ID="b24e2927-f763-4eda-b681-1f150c208e21"
+
+                cd $(System.DefaultWorkingDirectory)
+
+                terraform apply -auto-approve \
+                  -var-file="${{ parameters.environment }}.tfvars" \
+                  -var="admin_username=$(admin-username)" \
+                  -var="admin_password=$(admin-password)" \
+                  -var="admin_public_ip=$(admin-public-ip)" \
+                  -var="public_key=$(public-key)"
