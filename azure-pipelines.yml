@@ -30,3 +30,14 @@ steps:
     backendAzureRmContainerName: 'newtfstate'
 
     backendAzureRmKey: 'dev.terraform.tfstate'
+
+
+# TERRAFORM VALIDATE
+- task: TerraformTaskV4@4
+  displayName: Terraform Validate
+
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
