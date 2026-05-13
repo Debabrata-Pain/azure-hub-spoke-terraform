@@ -15,3 +15,6 @@ variable "public_key" {
 }
 
 
+variable "environment" {
+  type = string
+}

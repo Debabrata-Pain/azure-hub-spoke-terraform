@@ -11,7 +11,7 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
   }
 
   data_flow {
-    streams      = ["Microsoft-Perf", "Microsoft-InsightsMetrics"]
+    streams      = ["Microsoft-Perf"]
     destinations = ["law-destination"]
   }
 
@@ -25,16 +25,6 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
         "\\Processor(_Total)\\% Processor Time",
         "\\Memory\\Available MBytes",
         "\\LogicalDisk(_Total)\\% Free Space"
-      ]
-    }
-
-    performance_counter {
-      name                          = "insightsMetrics"
-      streams                       = ["Microsoft-InsightsMetrics"]
-      sampling_frequency_in_seconds = 60
-
-      counter_specifiers = [
-        "\\VmInsights\\DetailedMetrics"
       ]
     }
   }
