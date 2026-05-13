@@ -77,7 +77,7 @@ module "spoke2_db_subnet" {
 
 module "firewall_subnet" {
   source              = "./modules/subnet"
-  name                = "${var.environment}-AzureFirewallSubnet"
+  name                = "AzureFirewallSubnet"
   resource_group_name = module.rg.name
   vnet_name           = module.hub_vnet.name
   address_prefixes    = ["10.0.1.0/26"]
@@ -89,6 +89,11 @@ module "hub_to_spoke1" {
   resource_group_name       = module.rg.name
   virtual_network_name      = module.hub_vnet.name
   remote_virtual_network_id = module.spoke1_vnet.id
+
+   depends_on = [
+    module.spoke1_app_subnet,
+    module.spoke1_db_subnet
+  ]
 }
 
 module "spoke1_to_hub" {
@@ -97,6 +102,11 @@ module "spoke1_to_hub" {
   resource_group_name       = module.rg.name
   virtual_network_name      = module.spoke1_vnet.name
   remote_virtual_network_id = module.hub_vnet.id
+
+  depends_on = [
+    module.spoke1_app_subnet,
+    module.spoke1_db_subnet
+  ]
 }
 
 module "hub_to_spoke2" {
@@ -105,6 +115,11 @@ module "hub_to_spoke2" {
   resource_group_name       = module.rg.name
   virtual_network_name      = module.hub_vnet.name
   remote_virtual_network_id = module.spoke2_vnet.id
+
+  depends_on = [
+    module.spoke2_app_subnet,
+    module.spoke2_db_subnet
+  ]
 }
 
 module "spoke2_to_hub" {
@@ -113,6 +128,11 @@ module "spoke2_to_hub" {
   resource_group_name       = module.rg.name
   virtual_network_name      = module.spoke2_vnet.name
   remote_virtual_network_id = module.hub_vnet.id
+
+  depends_on = [
+    module.spoke2_app_subnet,
+    module.spoke2_db_subnet
+  ]
 }
 
 resource "azurerm_subnet_network_security_group_association" "spoke1_app_assoc" {
@@ -300,7 +320,7 @@ module "firewall" {
 
 module "firewall_mgmt_subnet" {
   source = "./modules/subnet"
-  name   = "${var.environment}-AzureFirewallManagementSubnet"
+  name   = "AzureFirewallManagementSubnet"
 
   resource_group_name = module.rg.name
   vnet_name           = module.hub_vnet.name
