@@ -1,4 +1,4 @@
-env = "dev"
+environment = "dev"
 
 resource_group_name = "hub-spoke-dev-rg"
 

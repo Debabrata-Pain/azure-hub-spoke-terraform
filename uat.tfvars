@@ -1,4 +1,4 @@
-env = "uat"
+environment = "uat"
 
 resource_group_name = "hub-spoke-uat-rg"
 

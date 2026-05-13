@@ -1,4 +1,4 @@
-env = "prod"
+environment = "prod"
 
 resource_group_name = "hub-spoke-prod-rg"
 
