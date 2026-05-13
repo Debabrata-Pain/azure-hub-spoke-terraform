@@ -121,7 +121,7 @@ stages:
         environmentServiceNameAzureRM: 'azure-terraform-connection'
 
         commandOptions: >
-          -var-file="${{ parameters.environment }}.tfvars"
+          -var-file="$(System.DefaultWorkingDirectory)/${{ parameters.environment }}.tfvars"
           -var="admin_username=$(admin-username)"
           -var="admin_password=$(admin-password)"
           -var="admin_public_ip=$(admin-public-ip)"
@@ -147,7 +147,7 @@ stages:
           steps:
 
           - checkout: self
-          
+
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: 'azure-terraform-connection'
