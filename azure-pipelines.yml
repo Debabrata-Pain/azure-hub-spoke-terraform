@@ -1,5 +1,15 @@
 trigger:
 - main
+parameters:
+- name: environment
+  displayName: Select Environment
+  type: string
+  default: dev
+
+  values:
+  - dev
+  - uat
+  - prod
 
 pool:
   vmImage: ubuntu-latest
@@ -111,6 +121,7 @@ stages:
         environmentServiceNameAzureRM: 'azure-terraform-connection'
 
         commandOptions: >
+          -var-file="${{ parameters.environment }}.tfvars"
           -var="admin_username=$(admin-username)"
           -var="admin_password=$(admin-password)"
           -var="admin_public_ip=$(admin-public-ip)"
@@ -134,8 +145,6 @@ stages:
         deploy:
 
           steps:
-
-          - checkout: self
 
           - task: AzureKeyVault@2
             inputs:
