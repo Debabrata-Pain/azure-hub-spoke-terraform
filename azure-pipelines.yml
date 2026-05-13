@@ -138,7 +138,7 @@ stages:
   jobs:
   - deployment: TerraformApply
 
-    environment: prod
+    environment: ${{ parameters.environment }}
 
     strategy:
       runOnce:
@@ -146,6 +146,8 @@ stages:
 
           steps:
 
+          - checkout: self
+          
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: 'azure-terraform-connection'
@@ -165,16 +167,11 @@ stages:
               command: 'init'
 
               workingDirectory: '$(System.DefaultWorkingDirectory)'
-
               backendServiceArm: 'azure-terraform-connection'
-
               backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
               backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
               backendAzureRmContainerName: 'newtfstate'
-
-              backendAzureRmKey: 'dev.terraform.tfstate'
+              backendAzureRmKey: '${{ parameters.environment }}.terraform.tfstate'
 
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
@@ -189,6 +186,7 @@ stages:
 
               commandOptions: >
                 -auto-approve
+                -var-file="$(System.DefaultWorkingDirectory)/${{ parameters.environment }}.tfvars"
                 -var="admin_username=$(admin-username)"
                 -var="admin_password=$(admin-password)"
                 -var="admin_public_ip=$(admin-public-ip)"
