@@ -5,7 +5,7 @@
 crash.log
 
 # Sensitive files
-*.tfvars
+terraform.tfvars
 *.tfvars.json
 
 # Terraform plan files
