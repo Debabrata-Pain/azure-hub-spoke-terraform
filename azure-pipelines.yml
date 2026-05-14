@@ -27,35 +27,10 @@ stages:
 
     steps:
 
-    - task: AzureKeyVault@2
-      inputs:
-        azureSubscription: 'azure-terraform-connection'
-        KeyVaultName: 'hubspoke-kv'
-        SecretsFilter: '*'
-        RunAsPreJob: true
+    - template: .azuredevops/templates/terraform-init.yml
 
-    - task: TerraformInstaller@0
-      inputs:
-        terraformVersion: '1.9.8'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-        backendServiceArm: 'azure-terraform-connection'
-
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
-        backendAzureRmContainerName: 'newtfstate'
-
-        backendAzureRmKey: 'dev.terraform.tfstate'
+      parameters:
+        environment: ${{ parameters.environment }}
 
     - task: TerraformTaskV4@4
       displayName: Terraform Validate
@@ -79,35 +54,10 @@ stages:
 
     steps:
 
-    - task: AzureKeyVault@2
-      inputs:
-        azureSubscription: 'azure-terraform-connection'
-        KeyVaultName: 'hubspoke-kv'
-        SecretsFilter: '*'
-        RunAsPreJob: true
+    - template: .azuredevops/templates/terraform-init.yml
 
-    - task: TerraformInstaller@0
-      inputs:
-        terraformVersion: '1.9.8'
-
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-        backendServiceArm: 'azure-terraform-connection'
-
-        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-
-        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-
-        backendAzureRmContainerName: 'newtfstate'
-
-        backendAzureRmKey: 'dev.terraform.tfstate'
+      parameters:
+        environment: ${{ parameters.environment }}
 
     - task: TerraformTaskV4@4
       displayName: Terraform Plan
@@ -148,30 +98,10 @@ stages:
 
           - checkout: self
 
-          - task: AzureKeyVault@2
-            inputs:
-              azureSubscription: 'azure-terraform-connection'
-              KeyVaultName: 'hubspoke-kv'
-              SecretsFilter: '*'
-              RunAsPreJob: true
+          - template: .azuredevops/templates/terraform-init.yml
 
-          - task: TerraformInstaller@0
-            inputs:
-              terraformVersion: '1.9.8'
-
-          - task: TerraformTaskV4@4
-            displayName: Terraform Init
-
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-              backendServiceArm: 'azure-terraform-connection'
-              backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
-              backendAzureRmStorageAccountName: 'debstorageaccountbackend'
-              backendAzureRmContainerName: 'newtfstate'
-              backendAzureRmKey: '${{ parameters.environment }}.terraform.tfstate'
+            parameters:
+              environment: ${{ parameters.environment }}
 
           - task: TerraformTaskV4@4
             displayName: Terraform Apply

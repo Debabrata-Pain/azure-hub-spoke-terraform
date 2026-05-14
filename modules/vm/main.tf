@@ -21,7 +21,7 @@ disable_password_authentication = true
 
 admin_ssh_key {
   username   = var.admin_username
-  public_key = trimspace(var.public_key)
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCaisBDMEkr9/zfOsZmWwZN6Sv8VcUP87UC9K67FmNRsS9rTDbgZJJdCl2N9x35ic11PdZC22F7P2IkxxoBHtWZvmEPwyCkEK1YUv5rP08PwwIebhrxjdN6RGbxyxX7wEzgMKLkxk1U9VZiGy/KHbqFOfZ3aIIyegU8h8zFh9LB+hl/PxHMTSXZ2er1Am5erNSkSqSLxkqC0zoKvcfx1x94b5+OOlKRFpSM8EIXxdon4/X1nBzynstWSErc2CKbHo5T0asL3bHlEo735RUUzq1efbzi4m85cEMTjgFbfxfyKOsJZH7R1nzZHziJdRyUFM2ylY0KF6n3reAUHEYQv0vr"
   }
 
   network_interface_ids = [
