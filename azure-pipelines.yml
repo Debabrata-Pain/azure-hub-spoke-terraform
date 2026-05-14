@@ -41,13 +41,49 @@ stages:
 
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
+
+# =========================
+# STAGE - SECURITY SCAN
+# =========================
+
+- stage: SecurityScan
+
+  displayName: Checkov Security Scan
+
+  dependsOn: Validate
+
+  jobs:
+
+  - job: CheckovScan
+
+    displayName: Run Checkov Scan
+
+    pool:
+      vmImage: ubuntu-latest
+
+    steps:
+
+    - checkout: self
+
+    - script: |
+
+        pip install checkov
+
+      displayName: Install Checkov
+
+    - script: |
+
+        checkov -d .
+
+      displayName: Run Checkov Scan
+
 # =========================
 # PLAN STAGE
 # =========================
 - stage: Plan
   displayName: Terraform Plan
 
-  dependsOn: Validate
+  dependsOn: SecurityScan
 
   jobs:
   - job: TerraformPlan
