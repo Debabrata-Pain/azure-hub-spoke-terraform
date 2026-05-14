@@ -1,0 +1,28 @@
+parameters:
+- name: environment
+  type: string
+
+steps:
+
+- template: .azuredevops/templates/terraform-init.yml
+
+  parameters:
+    environment: ${{ parameters.environment }}
+
+- task: TerraformTaskV4@4
+  displayName: Terraform Plan
+
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+    environmentServiceNameAzureRM: 'azure-terraform-connection'
+
+    commandOptions: >
+      -var-file="$(System.DefaultWorkingDirectory)/${{ parameters.environment }}.tfvars"
+      -var="admin_username=$(admin-username)"
+      -var="admin_password=$(admin-password)"
+      -var="admin_public_ip=$(admin-public-ip)"
+      -var="public_key=$(public-key)"
