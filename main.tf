@@ -373,3 +373,13 @@ module "app_gateway" {
   app1_private_ip = module.app1_vm.private_ip
   app2_private_ip = module.app2_vm.private_ip
 }
+
+module "automation" {
+  source = "./modules/automation"
+
+  automation_account_name = "${var.environment}-automation-account"
+
+  location            = module.rg.location
+  resource_group_name = module.rg.name
+  resource_group_id   = module.rg.id
+}
