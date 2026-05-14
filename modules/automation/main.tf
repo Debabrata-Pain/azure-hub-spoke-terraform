@@ -138,3 +138,66 @@ resource "azurerm_automation_runbook" "delete_snapshot" {
 
   content = file("${path.root}/scripts/delete-old-snapshots.ps1")
 }
+
+resource "azurerm_automation_schedule" "snapshot_schedule" {
+
+  name                    = "create-snapshot-schedule"
+
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  frequency = "Day"
+  interval  = 1
+
+  timezone = "Asia/Kolkata"
+
+  start_time = "2026-05-15T01:00:00+05:30"
+
+  description = "Daily VM snapshot creation"
+}
+
+resource "azurerm_automation_schedule" "delete_snapshot_schedule" {
+
+  name                    = "delete-old-snapshot-schedule"
+
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  frequency = "Day"
+  interval  = 1
+
+  timezone = "Asia/Kolkata"
+
+  start_time = "2026-05-15T02:00:00+05:30"
+
+  description = "Delete snapshots older than 2 days"
+}
+
+resource "azurerm_automation_job_schedule" "snapshot_job" {
+
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  schedule_name = azurerm_automation_schedule.snapshot_schedule.name
+  runbook_name  = azurerm_automation_runbook.create_snapshot.name
+
+  parameters = {
+    resourcegroupname = var.resource_group_name
+    environment       = var.environment
+  }
+}
+
+resource "azurerm_automation_job_schedule" "delete_snapshot_job" {
+
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  schedule_name = azurerm_automation_schedule.delete_snapshot_schedule.name
+  runbook_name  = azurerm_automation_runbook.delete_snapshot.name
+
+  parameters = {
+    resourcegroupname = var.resource_group_name
+    environment       = var.environment
+  }
+}
+
