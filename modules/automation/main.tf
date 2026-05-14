@@ -90,7 +90,8 @@ resource "azurerm_automation_job_schedule" "start_job" {
   runbook_name  = azurerm_automation_runbook.start_vm.name
 
   parameters = {
-    resourcegroupname = var.resource_group_name
+    ResourceGroupName = var.resource_group_name
+    Environment       = var.environment
   }
 }
 
@@ -103,6 +104,7 @@ resource "azurerm_automation_job_schedule" "stop_job" {
   runbook_name  = azurerm_automation_runbook.stop_vm.name
 
   parameters = {
-    resourcegroupname = var.resource_group_name
+    ResourceGroupName = var.resource_group_name
+    Environment       = var.environment
   }
 }

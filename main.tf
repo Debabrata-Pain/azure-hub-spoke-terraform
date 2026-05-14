@@ -204,6 +204,11 @@ module "app1_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password 
   public_key     = var.public_key
+
+  tags = {
+    Environment  = var.environment
+    AutoShutdown = "true"
+  }
 }
 
 module "app1_vm_shutdown" {
@@ -230,6 +235,11 @@ module "db1_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password 
   public_key     = var.public_key
+
+  tags = {
+    Environment  = var.environment
+    AutoShutdown = "true"
+  }
 }
 
 module "db1_vm_shutdown" {
@@ -256,6 +266,11 @@ module "app2_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password
   public_key     = var.public_key
+
+  tags = {
+    Environment  = var.environment
+    AutoShutdown = "true"
+  }
 }
 
 module "app2_vm_shutdown" {
@@ -282,6 +297,11 @@ module "db2_vm" {
   admin_username = var.admin_username
   admin_password = var.admin_password
   public_key     = var.public_key
+
+  tags = {
+    Environment  = var.environment
+    AutoShutdown = "true"
+  }
 }
 
 
@@ -382,4 +402,6 @@ module "automation" {
   location            = module.rg.location
   resource_group_name = module.rg.name
   resource_group_id   = module.rg.id
+
+  environment = var.environment
 }

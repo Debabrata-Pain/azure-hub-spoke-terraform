@@ -1,16 +1,25 @@
 param (
-    [string]$ResourceGroupName
+    [string]$ResourceGroupName,
+    [string]$Environment
 )
 
 Connect-AzAccount -Identity
 
-$vms = Get-AzVM -ResourceGroupName $ResourceGroupName
+$vms = Get-AzVM -ResourceGroupName $ResourceGroupName -Status
 
 foreach ($vm in $vms) {
 
-    Write-Output "Starting VM: $($vm.Name)"
+    $vmResource = Get-AzResource -ResourceId $vm.Id
 
-    Start-AzVM `
-        -ResourceGroupName $ResourceGroupName `
-        -Name $vm.Name
+    $envTag = $vmResource.Tags["Environment"]
+    $autoTag = $vmResource.Tags["AutoShutdown"]
+
+    if ($envTag -eq $Environment -and $autoTag -eq "true") {
+
+        Write-Output "Starting VM: $($vm.Name)"
+
+        Start-AzVM `
+            -ResourceGroupName $ResourceGroupName `
+            -Name $vm.Name
+    }
 }

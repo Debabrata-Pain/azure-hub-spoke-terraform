@@ -39,4 +39,6 @@ admin_ssh_key {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+   tags = var.tags
 }

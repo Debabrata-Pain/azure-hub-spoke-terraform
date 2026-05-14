@@ -13,3 +13,7 @@ variable "admin_password" {}
 variable "public_key" {
   type = string
 }
+
+variable "tags" {
+  type = map(string)
+}
