@@ -91,7 +91,7 @@ resource "azurerm_automation_job_schedule" "start_job" {
 
   parameters = {
     resourcegroupname = var.resource_group_name
-    Environment       = var.environment
+    environment       = var.environment
   }
 }
 
@@ -105,6 +105,6 @@ resource "azurerm_automation_job_schedule" "stop_job" {
 
   parameters = {
     resourcegroupname = var.resource_group_name
-    Environment       = var.environment
+    environment       = var.environment
   }
 }
