@@ -108,3 +108,33 @@ resource "azurerm_automation_job_schedule" "stop_job" {
     environment       = var.environment
   }
 }
+
+resource "azurerm_automation_runbook" "create_snapshot" {
+
+  name                    = "create-snapshot"
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  runbook_type = "PowerShell"
+
+  log_verbose  = true
+  log_progress = true
+
+  content = file("${path.root}/scripts/create-snapshot.ps1")
+}
+
+resource "azurerm_automation_runbook" "delete_snapshot" {
+
+  name                    = "delete-old-snapshots"
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  automation_account_name = azurerm_automation_account.auto.name
+
+  runbook_type = "PowerShell"
+
+  log_verbose  = true
+  log_progress = true
+
+  content = file("${path.root}/scripts/delete-old-snapshots.ps1")
+}

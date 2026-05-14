@@ -208,6 +208,7 @@ module "app1_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
+    Backup = "true"
   }
 }
 
@@ -239,6 +240,7 @@ module "db1_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
+    Backup = "true"
   }
 }
 
@@ -270,6 +272,7 @@ module "app2_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
+    Backup = "true"
   }
 }
 
@@ -301,6 +304,7 @@ module "db2_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
+    Backup = "true"
   }
 }
 
