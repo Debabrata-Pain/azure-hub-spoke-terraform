@@ -4,7 +4,7 @@ parameters:
 
 steps:
 
-- template: .azuredevops/templates/terraform-init.yml
+- template: terraform-init.yml
 
   parameters:
     environment: ${{ parameters.environment }}
