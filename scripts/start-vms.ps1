@@ -1,14 +1,16 @@
+param (
+    [string]$ResourceGroupName
+)
+
 Connect-AzAccount -Identity
 
-$resourceGroup = "dev-hub-spoke-rg"
-
-$vms = Get-AzVM -ResourceGroupName $resourceGroup
+$vms = Get-AzVM -ResourceGroupName $ResourceGroupName
 
 foreach ($vm in $vms) {
 
     Write-Output "Starting VM: $($vm.Name)"
 
     Start-AzVM `
-        -ResourceGroupName $resourceGroup `
+        -ResourceGroupName $ResourceGroupName `
         -Name $vm.Name
 }
