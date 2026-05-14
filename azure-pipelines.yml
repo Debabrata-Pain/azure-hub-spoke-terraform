@@ -78,28 +78,7 @@ stages:
 
           steps:
 
-          - checkout: self
-
-          - template: .azuredevops/templates/terraform-init.yml
+          - template: .azuredevops/templates/terraform-apply.yml
 
             parameters:
               environment: ${{ parameters.environment }}
-
-          - task: TerraformTaskV4@4
-            displayName: Terraform Apply
-
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-              environmentServiceNameAzureRM: 'azure-terraform-connection'
-
-              commandOptions: >
-                -auto-approve
-                -var-file="$(System.DefaultWorkingDirectory)/${{ parameters.environment }}.tfvars"
-                -var="admin_username=$(admin-username)"
-                -var="admin_password=$(admin-password)"
-                -var="admin_public_ip=$(admin-public-ip)"
-                -var="public_key=$(public-key)"
