@@ -356,6 +356,29 @@ module "firewall_mgmt_subnet" {
   address_prefixes = ["10.0.1.64/26"]
 }
 
+
+module "firewall_mgmt_nsg" {
+
+  source = "./modules/nsg"
+
+  name                = "${var.environment}-firewall-mgmt-nsg"
+
+  location            = module.rg.location
+
+  resource_group_name = module.rg.name
+
+  source_address_prefix = var.admin_public_ip
+}
+
+resource "azurerm_subnet_network_security_group_association" "firewall_mgmt_assoc" {
+
+  subnet_id = module.firewall_mgmt_subnet.subnet_id
+
+  network_security_group_id = module.firewall_mgmt_nsg.nsg_id
+}
+
+
+
 module "log_analytics" {
   source              = "./modules/log-analytics"
   name                = "${var.environment}-hub-log-workspace"
