@@ -34,6 +34,8 @@ module "spoke1_nsg" {
   name                = "${var.environment}-spoke1-nsg"
   location            = module.rg.location
   resource_group_name = module.rg.name
+
+  source_address_prefix = var.admin_public_ip
 }
 
 module "spoke2_nsg" { 
@@ -41,6 +43,8 @@ module "spoke2_nsg" {
   name                = "${var.environment}-spoke2-nsg"
   location            = module.rg.location
   resource_group_name = module.rg.name
+
+  source_address_prefix = var.admin_public_ip
 }
 
 module "spoke1_app_subnet" {
