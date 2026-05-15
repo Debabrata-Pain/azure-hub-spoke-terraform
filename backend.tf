@@ -6,5 +6,9 @@ terraform {
     key                  = "dev.terraform.tfstate"    # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
 
     use_azuread_auth = true
+  
+
+    subscription_id = "f2671501-63ad-4140-b3b4-443e5c06ff86"   # Your Azure subscription ID
+    tenant_id       = "b24e2927-f763-4eda-b681-1f150c208e21"   # Your tenant ID
   }
 }

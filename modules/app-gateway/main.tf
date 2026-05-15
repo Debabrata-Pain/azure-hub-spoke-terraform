@@ -12,6 +12,13 @@ resource "azurerm_application_gateway" "appgw" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
+  ssl_policy {
+
+    policy_type = "Predefined"
+
+    policy_name = "AppGwSslPolicy20220101"
+  }
+
   sku {
   name     = "Standard_v2"
   tier     = "Standard_v2"

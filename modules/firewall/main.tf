@@ -16,13 +16,24 @@ resource "azurerm_public_ip" "fw_mgmt_pip" {
   sku               = "Standard"
 }
 
+resource "azurerm_firewall_policy" "fw_policy" {
 
+  name                = "${var.name}-policy"
+
+  location            = var.location
+
+  resource_group_name = var.resource_group_name
+
+  sku = "Basic"
+}
 
 resource "azurerm_firewall" "fw" {
 
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group_name
+  
+  firewall_policy_id = azurerm_firewall_policy.fw_policy.id
 
   sku_name = "AZFW_VNet"
   sku_tier = "Basic"
