@@ -16,6 +16,7 @@ resource "azurerm_public_ip" "fw_mgmt_pip" {
   sku               = "Standard"
 }
 
+#checkov:skip=CKV_AZURE_220: Azure Firewall Basic SKU does not support IDPS
 resource "azurerm_firewall_policy" "fw_policy" {
 
   name                = "${var.name}-policy"
