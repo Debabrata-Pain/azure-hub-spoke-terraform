@@ -10,6 +10,8 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+
+#checkov:skip=CKV_AZURE_50: VM extensions required for Azure Monitor and automation operations
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = var.vm_name
   resource_group_name = var.resource_group_name
