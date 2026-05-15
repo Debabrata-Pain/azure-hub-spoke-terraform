@@ -38,6 +38,8 @@ resource "azurerm_firewall" "fw" {
   
   firewall_policy_id = azurerm_firewall_policy.fw_policy.id
 
+  threat_intel_mode = "Deny"
+
   sku_name = "AZFW_VNet"
   sku_tier = "Basic"
 
