@@ -12,11 +12,20 @@ resource "azurerm_application_gateway" "appgw" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
+  identity {
+  type = "SystemAssigned"
+  }
+
+  ssl_certificate { 
+    name = "appgw-cert" 
+    key_vault_secret_id = var.ssl_certificate_secret_id 
+    }
+
   ssl_policy {
 
     policy_type = "Predefined"
 
-    policy_name = "AppGwSslPolicy20220101"
+    policy_name = "AppGwSslPolicy20220101S"
   }
 
   sku {
@@ -31,9 +40,9 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-    name = "http-port"
-    port = 80
-  }
+  name = "https-port"
+  port = 443
+}
 
   frontend_ip_configuration {
     name                 = "frontend-ip"
@@ -58,16 +67,17 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   http_listener {
-    name                           = "http-listener"
-    frontend_ip_configuration_name = "frontend-ip"
-    frontend_port_name             = "http-port"
-    protocol                       = "Http"
-  }
+  name = "https-listener"
+  frontend_ip_configuration_name = "frontend-ip"
+  frontend_port_name = "https-port"
+  protocol = "Https"
+  ssl_certificate_name = "appgw-cert"
+}
 
   request_routing_rule {
     name                       = "http-routing-rule"
     rule_type                  = "Basic"
-    http_listener_name         = "http-listener"
+    http_listener_name         = "https-listener"
     backend_address_pool_name  = "backend-pool"
     backend_http_settings_name = "backend-http-settings"
     priority                   = 100

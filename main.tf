@@ -396,6 +396,9 @@ module "app_gateway" {
 
   app1_private_ip = module.app1_vm.private_ip
   app2_private_ip = module.app2_vm.private_ip
+
+  ssl_certificate_secret_id = "https://hubspoke-kv.vault.azure.net/certificates/appgw-cert/5344135abbf64e48a99274c43170a776"
+
 }
 
 module "automation" {
