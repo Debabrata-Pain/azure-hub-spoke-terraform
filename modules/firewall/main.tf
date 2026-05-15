@@ -25,6 +25,7 @@ resource "azurerm_firewall_policy" "fw_policy" {
   resource_group_name = var.resource_group_name
 
   sku = "Basic"
+  threat_intelligence_mode = "Deny"
 }
 
 
