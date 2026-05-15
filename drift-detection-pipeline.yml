@@ -1,0 +1,88 @@
+trigger: none
+
+schedules:
+- cron: "0 2 * * *"
+
+  displayName: Daily Drift Detection
+
+  branches:
+    include:
+    - main
+
+  always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+- name: environment
+  type: string
+  default: dev
+
+  values:
+  - dev
+  - uat
+  - prod
+
+stages:
+
+- stage: DriftDetection
+
+  displayName: Terraform Drift Detection
+
+  jobs:
+
+  - job: DetectDrift
+
+    steps:
+
+    - checkout: self
+
+    - task: AzureKeyVault@2
+      inputs:
+        azureSubscription: 'azure-terraform-connection'
+        KeyVaultName: 'hubspoke-kv'
+        SecretsFilter: '*'
+        RunAsPreJob: true
+
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: '1.9.8'
+
+    - task: TerraformTaskV4@4
+      displayName: Terraform Init
+
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        backendServiceArm: 'azure-terraform-connection'
+
+        backendAzureRmResourceGroupName: 'Tr-2.0-ResourceGroup'
+
+        backendAzureRmStorageAccountName: 'debstorageaccountbackend'
+
+        backendAzureRmContainerName: 'newtfstate'
+
+        backendAzureRmKey: '${{ parameters.environment }}.terraform.tfstate'
+
+    - task: TerraformTaskV4@4
+      displayName: Terraform Drift Check
+
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        environmentServiceNameAzureRM: 'azure-terraform-connection'
+
+        commandOptions: >
+          -detailed-exitcode
+          -var-file="$(System.DefaultWorkingDirectory)/${{ parameters.environment }}.tfvars"
+          -var="admin_username=$(admin-username)"
+          -var="admin_password=$(admin-password)"
+          -var="admin_public_ip=$(admin-public-ip)"
+          -var="public_key=$(public-key)"
