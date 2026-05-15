@@ -5,6 +5,8 @@ resource "azurerm_automation_account" "auto" {
 
   sku_name = "Basic"
 
+  public_network_access_enabled = false
+
   identity {
     type = "SystemAssigned"
   }
