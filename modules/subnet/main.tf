@@ -1,4 +1,4 @@
-#checkov:skip=CKV2_AZURE_31: NSG association handled externally via root module association resource  
+#checkov:skip=CKV2_AZURE_31:NSG association handled externally
 resource "azurerm_subnet" "subnet" {
   name                 = var.name
   resource_group_name  = var.resource_group_name
