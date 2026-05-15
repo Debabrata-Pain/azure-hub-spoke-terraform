@@ -7,6 +7,7 @@ resource "azurerm_public_ip" "appgw_pip" {
   sku               = "Standard"
 }
 
+#checkov:skip=CKV_AZURE_120: WAF_v2 intentionally not enabled due to lab cost constraints
 resource "azurerm_application_gateway" "appgw" {
   name                = var.name
   location            = var.location
