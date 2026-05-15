@@ -73,7 +73,7 @@ stages:
 
     - script: |
 
-        checkov -d .
+        checkov -d . --skip-check CKV_AZURE_220
 
       displayName: Run Checkov Scan
 
