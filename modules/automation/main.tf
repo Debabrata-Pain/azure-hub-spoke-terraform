@@ -61,7 +61,7 @@ resource "azurerm_automation_schedule" "start_schedule" {
 
   timezone  = "Asia/Kolkata"
 
-  start_time = "2026-05-15T08:00:00+05:30"
+  start_time = "2026-05-25T08:00:00+05:30"
 
   description = "Start VMs every morning"
 }
@@ -78,7 +78,7 @@ resource "azurerm_automation_schedule" "stop_schedule" {
 
   timezone  = "Asia/Kolkata"
 
-  start_time = "2026-05-15T20:00:00+05:30"
+  start_time = "2026-05-25T20:00:00+05:30"
 
   description = "Stop VMs every evening"
 }
