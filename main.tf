@@ -388,6 +388,11 @@ module "appgw_subnet" {
   address_prefixes = ["10.0.3.0/24"]
 }
 
+data "azurerm_key_vault" "existing_kv" {
+  name                = "hubspoke-kv"
+  resource_group_name = "TF-2.0-ResourceGroup"
+}
+
 module "app_gateway" {
   source = "./modules/app-gateway"
 
@@ -400,9 +405,11 @@ module "app_gateway" {
   app1_private_ip = module.app1_vm.private_ip
   app2_private_ip = module.app2_vm.private_ip
 
-  ssl_certificate_secret_id = "https://hubspoke-kv.vault.azure.net/certificates/appgw-cert/5344135abbf64e48a99274c43170a776"
 
-}
+  ssl_certificate_secret_id = "https://hubspoke-kv.vault.azure.net/certificates/appgw-cert/5344135abbf64e48a99274c43170a776"
+  key_vault_id = data.azurerm_key_vault.existing_kv.id
+  }
+
 
 module "automation" {
   source = "./modules/automation"

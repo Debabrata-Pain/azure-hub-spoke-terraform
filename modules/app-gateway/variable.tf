@@ -10,3 +10,7 @@ variable "app2_private_ip" {}
 variable "ssl_certificate_secret_id" {
   type = string
 }
+
+variable "key_vault_id" {
+  type = string
+}

@@ -7,6 +7,19 @@ resource "azurerm_public_ip" "appgw_pip" {
   sku               = "Standard"
 }
 
+resource "azurerm_user_assigned_identity" "appgw_uami" {
+  name                = "${var.name}-uami"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_role_assignment" "appgw_kv_access" {
+  scope                = var.key_vault_id
+  role_definition_name = "Key Vault Secrets User"
+
+  principal_id = azurerm_user_assigned_identity.appgw_uami.principal_id
+}
+
 #checkov:skip=CKV_AZURE_120: WAF_v2 intentionally not enabled due to lab cost constraints
 resource "azurerm_application_gateway" "appgw" {
   name                = var.name
@@ -15,8 +28,12 @@ resource "azurerm_application_gateway" "appgw" {
   
 
   identity {
-  type = "SystemAssigned"
-  }
+  type = "UserAssigned"
+
+  identity_ids = [
+    azurerm_user_assigned_identity.appgw_uami.id
+  ]
+}
 
   ssl_certificate { 
     name = "appgw-cert" 
