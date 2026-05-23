@@ -331,7 +331,7 @@ module "firewall" {
   name                = "${var.environment}-hub-firewall"
   location            = module.rg.location
   resource_group_name = module.rg.name
-
+  
   subnet_id            = module.firewall_subnet.subnet_id
   management_subnet_id = module.firewall_mgmt_subnet.subnet_id
 
@@ -343,7 +343,6 @@ module "firewall" {
   db2_private_ip  = module.db2_vm.private_ip
 
   log_analytics_workspace_id = module.log_analytics.workspace_id
-
 }
 
 module "firewall_mgmt_subnet" {

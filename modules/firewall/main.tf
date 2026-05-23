@@ -153,55 +153,90 @@ resource "azurerm_firewall_application_rule_collection" "app_rules" {
   }
 }
 
-resource "azurerm_firewall_nat_rule_collection" "dnat_rules" {
-  name                = "dnat-rules"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = var.resource_group_name
+resource "azurerm_firewall_policy_rule_collection_group" "fw_rules" {
 
-  priority = 300
-  action   = "Dnat"
+  name               = "fw-rule-group"
+  firewall_policy_id = azurerm_firewall_policy.fw_policy.id
 
-  # APP1 VM
-  rule {
-    name = "app1-ssh"
+  priority = 100
 
-    source_addresses = [
-      var.admin_public_ip
-    ]
+  nat_rule_collection {
+    name     = "dnat-rules"
+    priority = 100
+    action   = "Dnat"
 
-    destination_addresses = [
-      azurerm_public_ip.fw_pip.ip_address
-    ]
+    # APP1 VM
+    rule {
+      name = "app1-ssh"
 
-    destination_ports = ["2221"]
+      protocols = ["TCP"]
 
-    translated_address = var.app1_private_ip
-    translated_port    = "22"
+      source_addresses = [
+        var.admin_public_ip
+      ]
 
-    protocols = ["TCP"]
+      destination_address = azurerm_public_ip.fw_pip.ip_address
+
+      destination_ports = ["2221"]
+
+      translated_address = var.app1_private_ip
+      translated_port    = "22"
+    }
+
+    # APP2 VM
+    rule {
+      name = "app2-ssh"
+
+      protocols = ["TCP"]
+
+      source_addresses = [
+        var.admin_public_ip
+      ]
+
+      destination_address = azurerm_public_ip.fw_pip.ip_address
+
+      destination_ports = ["2223"]
+
+      translated_address = var.app2_private_ip
+      translated_port    = "22"
+    }
+
+    # DB1 VM
+    rule {
+      name = "db1-ssh"
+
+      protocols = ["TCP"]
+
+      source_addresses = [
+        var.admin_public_ip
+      ]
+
+      destination_address = azurerm_public_ip.fw_pip.ip_address
+
+      destination_ports = ["2225"]
+
+      translated_address = var.db1_private_ip
+      translated_port    = "22"
+    }
+
+    # DB2 VM
+    rule {
+      name = "db2-ssh"
+
+      protocols = ["TCP"]
+
+      source_addresses = [
+        var.admin_public_ip
+      ]
+
+      destination_address = azurerm_public_ip.fw_pip.ip_address
+
+      destination_ports = ["2227"]
+
+      translated_address = var.db2_private_ip
+      translated_port    = "22"
+    }
   }
-
-
-  # APP2 VM
-  rule {
-    name = "app2-ssh"
-
-    source_addresses = [
-      var.admin_public_ip
-    ]
-
-    destination_addresses = [
-      azurerm_public_ip.fw_pip.ip_address
-    ]
-
-    destination_ports = ["2223"]
-
-    translated_address = var.app2_private_ip
-    translated_port    = "22"
-
-    protocols = ["TCP"]
-  }
-
 }
 
 resource "azurerm_monitor_diagnostic_setting" "firewall_logs" {
