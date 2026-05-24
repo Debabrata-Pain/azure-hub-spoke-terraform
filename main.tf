@@ -410,7 +410,6 @@ module "app_gateway" {
   key_vault_id = data.azurerm_key_vault.existing_kv.id
   }
 
-
 module "automation" {
   source = "./modules/automation"
 
