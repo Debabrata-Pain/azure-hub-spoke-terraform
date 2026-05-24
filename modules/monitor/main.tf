@@ -17,16 +17,15 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
 
   data_sources {
     performance_counter {
-      name                          = "perfCounter"
-      streams                       = ["Microsoft-Perf"]
-      sampling_frequency_in_seconds = 60
+    name                          = "perfCounter"
+    streams                       = ["Microsoft-Perf"]
+    sampling_frequency_in_seconds = 60
 
-      counter_specifiers = [
-        "\\Processor(_Total)\\% Processor Time",
-        "\\Memory\\Available MBytes",
-        "\\LogicalDisk(_Total)\\% Free Space"
-      ]
-    }
+    counter_specifiers = [
+      "\\Processor Information(_Total)\\% Processor Time",
+      "\\Memory\\Available Bytes"
+    ]
+   }
   }
 }
 
