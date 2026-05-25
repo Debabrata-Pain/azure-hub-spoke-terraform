@@ -61,7 +61,7 @@ resource "azurerm_automation_schedule" "start_schedule" {
 
   timezone  = "Asia/Kolkata"
 
-  start_time = "2026-05-25T08:00:00+05:30"
+  start_time = "2026-12-25T08:00:00+05:30"
 
   description = "Start VMs every morning"
 }
@@ -78,7 +78,7 @@ resource "azurerm_automation_schedule" "stop_schedule" {
 
   timezone  = "Asia/Kolkata"
 
-  start_time = "2026-05-25T20:00:00+05:30"
+  start_time = "2026-12-25T20:00:00+05:30"
 
   description = "Stop VMs every evening"
 }
@@ -153,7 +153,7 @@ resource "azurerm_automation_schedule" "snapshot_schedule" {
 
   timezone = "Asia/Kolkata"
 
-  start_time = "2026-05-25T01:00:00+05:30"
+  start_time = "2026-12-25T01:00:00+05:30"
 
   description = "Daily VM snapshot creation"
 }
@@ -170,7 +170,7 @@ resource "azurerm_automation_schedule" "delete_snapshot_schedule" {
 
   timezone = "Asia/Kolkata"
 
-  start_time = "2026-05-25T02:00:00+05:30"
+  start_time = "2026-12-25T02:00:00+05:30"
 
   description = "Delete snapshots older than 2 days"
 }
