@@ -1,0 +1,19 @@
+#cloud-config
+
+users:
+  - name: azureuser
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICXU4jOaYSAIVKlpqJL7wquLZfP77nTbZ5eHelaSd1p3 cloud4c\15475@15475LAP
+
+package_update: true
+
+packages:
+  - nginx
+
+runcmd:
+  - systemctl enable nginx
+  - systemctl start nginx
