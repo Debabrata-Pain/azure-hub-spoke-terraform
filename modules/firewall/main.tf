@@ -259,7 +259,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_logs" {
     category = "AzureFirewallDnsProxy"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

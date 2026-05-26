@@ -23,7 +23,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
 admin_ssh_key {
     username   = var.admin_username
-    public_key = file("~/.ssh/id_ed25519.pub")
+    public_key = file("C:/Users/15475/.ssh/id_ed25519.pub")
   }
 
   custom_data = base64encode(
