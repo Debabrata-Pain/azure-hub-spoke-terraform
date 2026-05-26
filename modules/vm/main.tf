@@ -26,9 +26,7 @@ admin_ssh_key {
     public_key = file("C:/Users/15475/.ssh/id_ed25519.pub")
   }
 
-  custom_data = base64encode(
-    file("${path.module}/cloud-init.yaml")
-  )
+  custom_data = filebase64("${path.module}/cloud-init.yaml")
 
   network_interface_ids = [
     azurerm_network_interface.nic.id
