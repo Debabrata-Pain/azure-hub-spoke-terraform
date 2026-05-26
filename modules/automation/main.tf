@@ -170,7 +170,7 @@ resource "azurerm_automation_schedule" "delete_snapshot_schedule" {
 
   timezone = "Asia/Kolkata"
 
-  start_time = "2026-12-25T02:00:00+05:30"
+  start_time = "2026-11-25T02:00:00+05:30"
 
   description = "Delete snapshots older than 2 days"
 }
