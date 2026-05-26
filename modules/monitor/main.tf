@@ -1,7 +1,10 @@
 resource "azurerm_monitor_data_collection_rule" "dcr" {
+
   name                = var.dcr_name
   location            = var.location
   resource_group_name = var.resource_group_name
+
+  kind = "Linux"
 
   destinations {
     log_analytics {
@@ -16,17 +19,21 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
   }
 
   data_sources {
-    performance_counter {
-    name                          = "perfCounter"
-    streams                       = ["Microsoft-Perf"]
-    sampling_frequency_in_seconds = 60
 
-    counter_specifiers = [
-      "\\Processor Information(_Total)\\% Processor Time",
-      "\\Memory\\Available Bytes"
-    ]
-   }
+    performance_counter {
+      name                          = "perfCounter"
+      streams                       = ["Microsoft-Perf"]
+      sampling_frequency_in_seconds = 60
+
+      counter_specifiers = [
+        "\\Processor(_Total)\\% Processor Time",
+        "\\Memory\\Available Bytes",
+        "\\LogicalDisk(_Total)\\% Free Space"
+      ]
+    }
   }
+
+  description = "Linux VM monitoring DCR"
 }
 
 resource "azurerm_virtual_machine_extension" "ama" {
