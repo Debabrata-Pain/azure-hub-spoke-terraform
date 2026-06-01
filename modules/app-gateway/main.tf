@@ -25,20 +25,20 @@ resource "azurerm_application_gateway" "appgw" {
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group_name
-  
+
 
   identity {
-  type = "UserAssigned"
+    type = "UserAssigned"
 
-  identity_ids = [
-    azurerm_user_assigned_identity.appgw_uami.id
-  ]
-}
+    identity_ids = [
+      azurerm_user_assigned_identity.appgw_uami.id
+    ]
+  }
 
-  ssl_certificate { 
-    name = "appgw-cert" 
-    key_vault_secret_id = var.ssl_certificate_secret_id 
-    }
+  ssl_certificate {
+    name                = "appgw-cert"
+    key_vault_secret_id = var.ssl_certificate_secret_id
+  }
 
   ssl_policy {
 
@@ -48,10 +48,10 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   sku {
-  name     = "Standard_v2"
-  tier     = "Standard_v2"
-  capacity = 1
-}
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 1
+  }
 
   gateway_ip_configuration {
     name      = "gateway-ip-config"
@@ -59,9 +59,9 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-  name = "https-port"
-  port = 443
-}
+    name = "https-port"
+    port = 443
+  }
 
   frontend_ip_configuration {
     name                 = "frontend-ip"
@@ -86,12 +86,12 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   http_listener {
-  name = "https-listener"
-  frontend_ip_configuration_name = "frontend-ip"
-  frontend_port_name = "https-port"
-  protocol = "Https"
-  ssl_certificate_name = "appgw-cert"
-}
+    name                           = "https-listener"
+    frontend_ip_configuration_name = "frontend-ip"
+    frontend_port_name             = "https-port"
+    protocol                       = "Https"
+    ssl_certificate_name           = "appgw-cert"
+  }
 
   request_routing_rule {
     name                       = "http-routing-rule"

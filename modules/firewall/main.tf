@@ -34,7 +34,7 @@ resource "azurerm_firewall" "fw" {
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group_name
-  
+
   firewall_policy_id = azurerm_firewall_policy.fw_policy.id
 
   threat_intel_mode = "Deny"
@@ -49,45 +49,45 @@ resource "azurerm_firewall" "fw" {
   }
 
   management_ip_configuration {
-  name                 = "management-config"
-  subnet_id            = var.management_subnet_id
-  public_ip_address_id = azurerm_public_ip.fw_mgmt_pip.id
+    name                 = "management-config"
+    subnet_id            = var.management_subnet_id
+    public_ip_address_id = azurerm_public_ip.fw_mgmt_pip.id
   }
 }
 
-  resource "azurerm_firewall_policy_rule_collection_group" "fw_rules" {
+resource "azurerm_firewall_policy_rule_collection_group" "fw_rules" {
 
-    name               = "fw-rule-group"
-    firewall_policy_id = azurerm_firewall_policy.fw_policy.id
+  name               = "fw-rule-group"
+  firewall_policy_id = azurerm_firewall_policy.fw_policy.id
 
-    priority = 100
+  priority = 100
 
   # ==================================================
   # NAT RULE COLLECTION
   # ==================================================
 
-    nat_rule_collection {
-      name     = "dnat-rules"
-      priority = 100
-      action   = "Dnat"
+  nat_rule_collection {
+    name     = "dnat-rules"
+    priority = 100
+    action   = "Dnat"
 
-      # APP1 VM
-      rule {
-        name = "app1-ssh"
+    # APP1 VM
+    rule {
+      name = "app1-ssh"
 
-        protocols = ["TCP"]
+      protocols = ["TCP"]
 
-        source_addresses = [
-          var.admin_public_ip
-        ]
+      source_addresses = [
+        var.admin_public_ip
+      ]
 
-        destination_address = azurerm_public_ip.fw_pip.ip_address
+      destination_address = azurerm_public_ip.fw_pip.ip_address
 
-        destination_ports = ["2221"]
+      destination_ports = ["2221"]
 
-        translated_address = var.app1_private_ip
-        translated_port    = "22"
-      }
+      translated_address = var.app1_private_ip
+      translated_port    = "22"
+    }
 
     # APP2 VM
     rule {
@@ -144,11 +144,11 @@ resource "azurerm_firewall" "fw" {
     }
   }
 
-# ==================================================
+  # ==================================================
   # NETWORK RULE COLLECTION
   # ==================================================
 
- network_rule_collection {
+  network_rule_collection {
     name     = "network-rule"
     priority = 200
     action   = "Allow"
@@ -210,7 +210,7 @@ resource "azurerm_firewall" "fw" {
   }
 
 
-# ==================================================
+  # ==================================================
   # APPLICATION RULE COLLECTION
   # ==================================================
 

@@ -1,12 +1,12 @@
 variable "admin_public_ip" {
-  type    = string
+  type = string
 }
 
 variable "admin_username" {
-  type    = string
+  type = string
 }
 variable "admin_password" {
-  type = string
+  type      = string
   sensitive = true
 }
 

@@ -26,7 +26,7 @@ resource "azurerm_automation_runbook" "start_vm" {
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name
 
-  log_verbose = true
+  log_verbose  = true
   log_progress = true
 
   runbook_type = "PowerShell"
@@ -41,7 +41,7 @@ resource "azurerm_automation_runbook" "stop_vm" {
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name
 
-  log_verbose = true
+  log_verbose  = true
   log_progress = true
 
   runbook_type = "PowerShell"
@@ -51,7 +51,7 @@ resource "azurerm_automation_runbook" "stop_vm" {
 
 resource "azurerm_automation_schedule" "start_schedule" {
 
-  name                    = "start-vm-schedule"
+  name = "start-vm-schedule"
 
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name
@@ -59,7 +59,7 @@ resource "azurerm_automation_schedule" "start_schedule" {
   frequency = "Day"
   interval  = 1
 
-  timezone  = "Asia/Kolkata"
+  timezone = "Asia/Kolkata"
 
   start_time = "2026-12-25T08:00:00+05:30"
 
@@ -68,7 +68,7 @@ resource "azurerm_automation_schedule" "start_schedule" {
 
 resource "azurerm_automation_schedule" "stop_schedule" {
 
-  name                    = "stop-vm-schedule"
+  name = "stop-vm-schedule"
 
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name
@@ -76,7 +76,7 @@ resource "azurerm_automation_schedule" "stop_schedule" {
   frequency = "Day"
   interval  = 1
 
-  timezone  = "Asia/Kolkata"
+  timezone = "Asia/Kolkata"
 
   start_time = "2026-12-25T20:00:00+05:30"
 
@@ -143,7 +143,7 @@ resource "azurerm_automation_runbook" "delete_snapshot" {
 
 resource "azurerm_automation_schedule" "snapshot_schedule" {
 
-  name                    = "create-snapshot-schedule"
+  name = "create-snapshot-schedule"
 
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name
@@ -160,7 +160,7 @@ resource "azurerm_automation_schedule" "snapshot_schedule" {
 
 resource "azurerm_automation_schedule" "delete_snapshot_schedule" {
 
-  name                    = "delete-old-snapshot-schedule"
+  name = "delete-old-snapshot-schedule"
 
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.auto.name

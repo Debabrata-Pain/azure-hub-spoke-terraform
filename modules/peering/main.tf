@@ -8,6 +8,6 @@ resource "azurerm_virtual_network_peering" "peer" {
   allow_forwarded_traffic      = true
 
   timeouts {
-  create = "30m"
+    create = "30m"
   }
 }

@@ -17,11 +17,11 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name = var.resource_group_name
   location            = var.location
   size                = var.vm_size
-  
+
   admin_username                  = var.admin_username
   disable_password_authentication = true
 
-admin_ssh_key {
+  admin_ssh_key {
     username   = var.admin_username
     public_key = file("${path.root}/keys/id_ed25519.pub")
   }
@@ -44,6 +44,6 @@ admin_ssh_key {
     version   = "latest"
   }
 
-   tags = var.tags
-   
+  tags = var.tags
+
 }

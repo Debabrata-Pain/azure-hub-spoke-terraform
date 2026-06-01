@@ -38,7 +38,7 @@ module "spoke1_nsg" {
   source_address_prefix = var.admin_public_ip
 }
 
-module "spoke2_nsg" { 
+module "spoke2_nsg" {
   source              = "./modules/nsg"
   name                = "${var.environment}-spoke2-nsg"
   location            = module.rg.location
@@ -94,7 +94,7 @@ module "hub_to_spoke1" {
   virtual_network_name      = module.hub_vnet.name
   remote_virtual_network_id = module.spoke1_vnet.id
 
-   depends_on = [
+  depends_on = [
     module.spoke1_app_subnet,
     module.spoke1_db_subnet
   ]
@@ -206,20 +206,20 @@ module "app1_vm" {
   subnet_id           = module.spoke1_app_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password 
+  admin_password = var.admin_password
   public_key     = var.public_key
 
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
-    Backup = "true"
+    Backup       = "true"
   }
 }
 
 module "app1_vm_shutdown" {
   source = "./modules/vm-autoshutdown"
 
-  vm_id   = module.app1_vm.vm_id
+  vm_id    = module.app1_vm.vm_id
   location = module.rg.location
 
   shutdown_time = "1900"
@@ -238,20 +238,20 @@ module "db1_vm" {
   subnet_id           = module.spoke1_db_subnet.subnet_id
 
   admin_username = var.admin_username
-  admin_password = var.admin_password 
+  admin_password = var.admin_password
   public_key     = var.public_key
 
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
-    Backup = "true"
+    Backup       = "true"
   }
 }
 
 module "db1_vm_shutdown" {
   source = "./modules/vm-autoshutdown"
 
-  vm_id   = module.db1_vm.vm_id
+  vm_id    = module.db1_vm.vm_id
   location = module.rg.location
 
   shutdown_time = "1900"
@@ -276,14 +276,14 @@ module "app2_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
-    Backup = "true"
+    Backup       = "true"
   }
 }
 
 module "app2_vm_shutdown" {
   source = "./modules/vm-autoshutdown"
 
-  vm_id   = module.app2_vm.vm_id
+  vm_id    = module.app2_vm.vm_id
   location = module.rg.location
 
   shutdown_time = "1900"
@@ -308,7 +308,7 @@ module "db2_vm" {
   tags = {
     Environment  = var.environment
     AutoShutdown = "true"
-    Backup = "true"
+    Backup       = "true"
   }
 }
 
@@ -316,7 +316,7 @@ module "db2_vm" {
 module "db2_vm_shutdown" {
   source = "./modules/vm-autoshutdown"
 
-  vm_id   = module.db2_vm.vm_id
+  vm_id    = module.db2_vm.vm_id
   location = module.rg.location
 
   shutdown_time = "1900"
@@ -331,7 +331,7 @@ module "firewall" {
   name                = "${var.environment}-hub-firewall"
   location            = module.rg.location
   resource_group_name = module.rg.name
-  
+
   subnet_id            = module.firewall_subnet.subnet_id
   management_subnet_id = module.firewall_mgmt_subnet.subnet_id
 
@@ -407,8 +407,8 @@ module "app_gateway" {
 
 
   ssl_certificate_secret_id = "https://hubspoke-kv.vault.azure.net/secrets/appgw-cert/5344135abbf64e48a99274c43170a776"
-  key_vault_id = data.azurerm_key_vault.existing_kv.id
-  }
+  key_vault_id              = data.azurerm_key_vault.existing_kv.id
+}
 
 module "automation" {
   source = "./modules/automation"
@@ -420,4 +420,25 @@ module "automation" {
   resource_group_id   = module.rg.id
 
   environment = var.environment
+}
+
+data "azurerm_client_config" "current" {}
+
+module "alerts" {
+
+  source = "./modules/alerts"
+
+  environment         = var.environment
+  resource_group_name = module.rg.name
+
+  subscription_id = data.azurerm_client_config.current.subscription_id
+
+  alert_email = "debabrata.pain@cloud4c.com"
+
+  vm_ids = {
+    app1 = module.app1_vm.vm_id
+    db1  = module.db1_vm.vm_id
+    app2 = module.app2_vm.vm_id
+    db2  = module.db2_vm.vm_id
+  }
 }

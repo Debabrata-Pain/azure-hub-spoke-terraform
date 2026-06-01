@@ -7,16 +7,16 @@ variable "location" {
 }
 
 variable "shutdown_time" {
-  type = string
+  type    = string
   default = "1900"
 }
 
 variable "timezone" {
-  type = string
+  type    = string
   default = "India Standard Time"
 }
 
 variable "tags" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
