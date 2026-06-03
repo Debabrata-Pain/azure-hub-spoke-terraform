@@ -6,7 +6,7 @@ resource "azurerm_virtual_machine_extension" "ama" {
   for_each = var.vm_ids
 
   name                       = "AzureMonitorAgent"
-  virtual_machine_id         = each.value
+  virtual_machine_id         = each.value.id
   publisher                  = "Microsoft.Azure.Monitor"
   type = (
     each.value.os_type == "windows"
