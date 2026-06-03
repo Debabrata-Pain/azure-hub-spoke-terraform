@@ -367,15 +367,29 @@ module "monitor" {
   dcr_name            = "${var.environment}-hub-monitor-dcr"
   location            = module.rg.location
   resource_group_name = module.rg.name
-
   workspace_id = module.log_analytics.workspace_id
 
   vm_ids = {
-    app1 = module.app1_vm.vm_id
-    db1  = module.db1_vm.vm_id
-    app2 = module.app2_vm.vm_id
-    db2  = module.db2_vm.vm_id
+  app1 = {
+    id      = module.app1_vm.vm_id
+    os_type = "linux"
   }
+
+  db1 = {
+    id      = module.db1_vm.vm_id
+    os_type = "linux"
+  }
+
+  app2 = {
+    id      = module.app2_vm.vm_id
+    os_type = "linux"
+  }
+
+  db2 = {
+    id      = module.db2_vm.vm_id
+    os_type = "linux"
+  }
+}
 }
 
 module "appgw_subnet" {
@@ -435,20 +449,20 @@ module "alerts" {
 
   alert_email = "debabrata.pain@cloud4c.com"
 
+  location     = module.rg.location
+  workspace_id = module.log_analytics.workspace_id
+
+  vm_names = {
+    app1 = "${var.environment}-app1-vm"
+    db1  = "${var.environment}-db1-vm"
+    app2 = "${var.environment}-app2-vm"
+    db2  = "${var.environment}-db2-vm"
+  }
+
   vm_ids = {
     app1 = module.app1_vm.vm_id
     db1  = module.db1_vm.vm_id
     app2 = module.app2_vm.vm_id
     db2  = module.db2_vm.vm_id
   }
-}
-
-location     = module.rg.location
-workspace_id = module.log_analytics.workspace_id
-
-vm_names = {
-  app1 = "${var.environment}-app1-vm"
-  db1  = "${var.environment}-db1-vm"
-  app2 = "${var.environment}-app2-vm"
-  db2  = "${var.environment}-db2-vm"
 }

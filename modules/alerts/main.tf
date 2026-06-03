@@ -216,10 +216,10 @@ QUERY
   }
 
   action {
-    action_groups = [
-      var.action_group_id
-    ]
-  }
+  action_groups = [
+    azurerm_monitor_action_group.alerts.id
+  ]
+}
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "memory90" {
@@ -258,7 +258,7 @@ QUERY
 
   action {
     action_groups = [
-      var.action_group_id
+      azurerm_monitor_action_group.alerts.id
     ]
   }
 }

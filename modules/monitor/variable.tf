@@ -4,5 +4,8 @@ variable "resource_group_name" {}
 variable "workspace_id" {}
 
 variable "vm_ids" {
-  type = map(string)
+  type = map(object({
+    id      = string
+    os_type = string
+  }))
 }

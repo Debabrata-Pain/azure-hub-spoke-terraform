@@ -10,9 +10,13 @@ variable "vm_ids" {
 
 variable "alert_email" {}
 
-variable "location" {}
+variable "location" {
+  type = string
+}
 
-variable "workspace_id" {}
+variable "workspace_id" {
+  type = string
+}
 
 variable "vm_names" {
   type = map(string)

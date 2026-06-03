@@ -72,7 +72,7 @@ resource "azurerm_monitor_data_collection_rule_association" "assoc" {
   for_each = var.vm_ids
 
   name                    = "dcr-association-${each.key}"
-  target_resource_id      = each.value
+  target_resource_id      = each.value.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.dcr.id
 
   depends_on = [
