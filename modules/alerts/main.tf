@@ -181,3 +181,85 @@ resource "azurerm_monitor_metric_alert" "cpu90" {
   window_size = "PT5M"
 }
 
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "memory80" {
+
+  for_each = var.vm_names
+
+  name                = "${each.key}-memory80"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  evaluation_frequency = "PT5M"
+  window_duration      = "PT5M"
+
+  scopes = [
+    var.workspace_id
+  ]
+
+  severity = 2
+
+  criteria {
+
+    query = <<QUERY
+InsightsMetrics
+| where Origin == "vm.azm.ms"
+| where Namespace == "Memory"
+| where Name == "AvailableMB"
+| where Computer == "${each.value}"
+| summarize AvgValue = avg(Val) by bin(TimeGenerated, 5m)
+QUERY
+
+    operator  = "LessThan"
+    threshold = 1024
+
+    time_aggregation_method = "Average"
+  }
+
+  action {
+    action_groups = [
+      var.action_group_id
+    ]
+  }
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "memory90" {
+
+  for_each = var.vm_names
+
+  name                = "${each.key}-memory90"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  evaluation_frequency = "PT5M"
+  window_duration      = "PT5M"
+
+  scopes = [
+    var.workspace_id
+  ]
+
+  severity = 0
+
+  criteria {
+
+    query = <<QUERY
+InsightsMetrics
+| where Origin == "vm.azm.ms"
+| where Namespace == "Memory"
+| where Name == "AvailableMB"
+| where Computer == "${each.value}"
+| summarize AvgValue = avg(Val) by bin(TimeGenerated, 5m)
+QUERY
+
+    operator  = "LessThan"
+    threshold = 512
+
+    time_aggregation_method = "Average"
+  }
+
+  action {
+    action_groups = [
+      var.action_group_id
+    ]
+  }
+}
+

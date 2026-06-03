@@ -442,3 +442,13 @@ module "alerts" {
     db2  = module.db2_vm.vm_id
   }
 }
+
+location     = module.rg.location
+workspace_id = module.log_analytics.workspace_id
+
+vm_names = {
+  app1 = "${var.environment}-app1-vm"
+  db1  = "${var.environment}-db1-vm"
+  app2 = "${var.environment}-app2-vm"
+  db2  = "${var.environment}-db2-vm"
+}
