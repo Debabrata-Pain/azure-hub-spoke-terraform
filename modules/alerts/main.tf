@@ -213,6 +213,7 @@ QUERY
     threshold = 1024
 
     time_aggregation_method = "Average"
+    metric_measure_column     = "AvgValue"
   }
 
   action {
@@ -254,6 +255,7 @@ QUERY
     threshold = 512
 
     time_aggregation_method = "Average"
+    metric_measure_column     = "AvgValue"
   }
 
   action {
